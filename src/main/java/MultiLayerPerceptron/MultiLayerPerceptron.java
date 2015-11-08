@@ -61,6 +61,7 @@ public class MultiLayerPerceptron extends Classifier {
 
     public void printNodeRelation()
     {
+        System.out.println("===== Node Relation =====");
         for(HashMap.Entry<Integer, HashMap<Integer, Double>> from : weights.entrySet())
         {
             System.out.printf("Node %d\n", from.getKey());
@@ -69,6 +70,25 @@ public class MultiLayerPerceptron extends Classifier {
                 System.out.printf("|=>%d = %f\n", to.getKey(), to.getValue());
             }
         }
+        System.out.println();
+    }
+
+    public void printNodeBias()
+    {
+        System.out.println("===== Node Bias =====");
+        for(int i=inputNeuronSize; i<nodesSize; i++)
+        {
+            System.out.printf("Bias[%d]: %f\n",i,nodes.get(i).getBias());
+        }
+        System.out.println();
+    }
+
+    private double getRandom(double min, double max)
+    {
+        double value = 0.0;
+        Random r = new Random();
+        value = min + (max-min) * r.nextDouble();
+        return value;
     }
 
     private void init()
@@ -76,7 +96,6 @@ public class MultiLayerPerceptron extends Classifier {
         nodesSize = inputNeuronSize + outputNeuronSize;
         HashMap<Integer, Double> temp;
         HashMap<Integer, Double> temp2;
-        Random r = new Random();
         double value;
         int start_idx;
 
@@ -87,7 +106,16 @@ public class MultiLayerPerceptron extends Classifier {
 
         for(int i=0; i<nodesSize; i++)
         {
-            nodes.add(new Node());
+            Node tempNode = new Node();
+            if(randomWeight)
+            {
+                tempNode.setBias(getRandom(-0.1, 0.1));
+            }
+            else
+            {
+                tempNode.setBias(initialWeight);
+            }
+            nodes.add(tempNode);
         }
 
         if(hiddenLayerSize.length > 0)
@@ -97,7 +125,7 @@ public class MultiLayerPerceptron extends Classifier {
                 for (int j = inputNeuronSize; j < inputNeuronSize + hiddenLayerSize[0]; j++)
                 {
                     if (randomWeight) {
-                        value = -0.1 + (0.2) * r.nextDouble();
+                        value = getRandom(-0.1, 0.1);
                     } else {
                         value = initialWeight;
                     }
@@ -124,7 +152,7 @@ public class MultiLayerPerceptron extends Classifier {
                     {
                         if(randomWeight)
                         {
-                            value = -0.1 + (0.2) * r.nextDouble();
+                            value = getRandom(-0.1, 0.1);
                         }
                         else
                         {
@@ -153,7 +181,7 @@ public class MultiLayerPerceptron extends Classifier {
                 {
                     if(randomWeight)
                     {
-                        value = -0.1 + (0.2) * r.nextDouble();
+                        value = getRandom(-0.1, 0.1);
                     }
                     else
                     {
@@ -180,7 +208,7 @@ public class MultiLayerPerceptron extends Classifier {
                 for (int j = inputNeuronSize; j < inputNeuronSize + outputNeuronSize; j++)
                 {
                     if (randomWeight) {
-                        value = -0.1 + (0.2) * r.nextDouble();
+                        value = getRandom(-0.1, 0.1);
                     } else {
                         value = initialWeight;
                     }
@@ -242,6 +270,8 @@ public class MultiLayerPerceptron extends Classifier {
         multiLayerPerceptron.setHiddenNeuronSize(1,2);
         multiLayerPerceptron.setInitialWeight(0.0);
         multiLayerPerceptron.buildClassifier(dataset);
+
         multiLayerPerceptron.printNodeRelation();
+        multiLayerPerceptron.printNodeBias();
     }
 }

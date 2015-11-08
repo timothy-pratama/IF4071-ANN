@@ -33,6 +33,22 @@ public class Node {
         return error;
     }
 
+    public void setOutput(double output) {
+        this.output = output;
+    }
+
+    public void setError(double error) {
+        this.error = error;
+    }
+
+    public double getBias() {
+        return bias;
+    }
+
+    public void setBias(double bias) {
+        this.bias = bias;
+    }
+
     public void computeOutputError()
     {
 
@@ -45,7 +61,7 @@ public class Node {
 
     public void computeOutput(double input)
     {
-        output = (double)1/(double)(1+Math.exp(-(input+bias)));
+        output = (double)1/(double)(1+Math.exp(-input));
     }
 
     public static void main(String [] args)

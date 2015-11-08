@@ -13,10 +13,16 @@ public class Node {
      */
     private double error;
 
+    /**
+     * Nilai bobot bias untuk node ini
+     */
+    private double bias;
+
     public Node()
     {
         output = 0.0;
         error = 0.0;
+        bias = 0.0;
     }
 
     public double getOutput() {
@@ -39,7 +45,7 @@ public class Node {
 
     public void computeOutput(double input)
     {
-        output = (double)1/(double)(1+Math.exp(-input));
+        output = (double)1/(double)(1+Math.exp(-(input+bias)));
     }
 
     public static void main(String [] args)

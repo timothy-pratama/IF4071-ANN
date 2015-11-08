@@ -11,11 +11,27 @@ import weka.core.Instances;
 public class MultiLayerPerceptron extends Classifier {
     @Override
     public void buildClassifier(Instances data) throws Exception {
+
     }
 
     @Override
     public Capabilities getCapabilities() {
-        return super.getCapabilities();
+        Capabilities capabilities = super.getCapabilities();
+        capabilities.disableAll();
+
+        // Attributes capabilities
+        capabilities.enable(Capabilities.Capability.NOMINAL_ATTRIBUTES);
+        capabilities.enable(Capabilities.Capability.NUMERIC_ATTRIBUTES);
+        capabilities.enable(Capabilities.Capability.DATE_ATTRIBUTES);
+        capabilities.enable(Capabilities.Capability.MISSING_VALUES);
+
+        // Class Capabilities
+        capabilities.enable(Capabilities.Capability.NOMINAL_CLASS);
+        capabilities.enable(Capabilities.Capability.NUMERIC_CLASS);
+        capabilities.enable(Capabilities.Capability.DATE_CLASS);
+        capabilities.enable(Capabilities.Capability.MISSING_CLASS_VALUES);
+
+        return capabilities;
     }
 
     @Override

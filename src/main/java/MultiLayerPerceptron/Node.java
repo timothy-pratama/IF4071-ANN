@@ -18,23 +18,29 @@ public class Node {
      */
     private double bias;
 
+    /**
+     * Nilai target untuk node ini
+     */
+    private double target;
+
     public Node()
     {
         output = 0.0;
         error = 0.0;
         bias = 0.0;
+        target = 0.0;
     }
 
     public double getOutput() {
         return output;
     }
 
-    public double getError() {
-        return error;
-    }
-
     public void setOutput(double output) {
         this.output = output;
+    }
+
+    public double getError() {
+        return error;
     }
 
     public void setError(double error) {
@@ -49,6 +55,14 @@ public class Node {
         this.bias = bias;
     }
 
+    public double getTarget() {
+        return target;
+    }
+
+    public void setTarget(double target) {
+        this.target = target;
+    }
+
     public void computeOutputError()
     {
 
@@ -59,14 +73,14 @@ public class Node {
 
     }
 
-    public void computeOutput(double input)
+    public static double siegmoid(double input)
     {
-        output = (double)1/(double)(1+Math.exp(-input));
+        return (double)1/(double)(1+Math.exp(-input));
     }
 
     public static void main(String [] args)
     {
         Node node = new Node();
-        node.computeOutput(-0.05625);
+        node.setOutput(Node.siegmoid(-0.05625));
     }
 }

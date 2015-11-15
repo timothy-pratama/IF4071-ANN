@@ -69,6 +69,10 @@ public class MultiLayerPerceptron extends Classifier {
         topology.addOutputLayer(dataset.numClasses());
 
         connectAllNodes();
+
+        System.out.println(dataset);
+        System.out.println(topology.getNodes());
+        System.out.println(topology.getWeights());
     }
 
     /**
@@ -105,7 +109,7 @@ public class MultiLayerPerceptron extends Classifier {
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.nominal.arff");
+        Instances dataset = Util.readARFF("weather.numeric.arff");
         Topology topology = new Topology();
         topology.addHiddenLayer(1);
         topology.addHiddenLayer(2);

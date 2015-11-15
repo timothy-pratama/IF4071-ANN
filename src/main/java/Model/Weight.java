@@ -26,6 +26,13 @@ public class Weight {
         randomWeight();
     }
 
+    public Weight(Node n1, Node n2)
+    {
+        node1 = n1;
+        node2 = n2;
+        randomWeight();
+    }
+
     public Weight(Node n1, Node n2, double weight)
     {
         node1 = n1;
@@ -72,7 +79,7 @@ public class Weight {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("weight[").append(node1.getId()).append("][").append(node2.getId()).append("]: ").append(weight).append("\n");
+        sb.append("Weight[").append(node1.getId()).append("][").append(node2.getId()).append("]: ").append(weight).append("\n");
         return sb.toString();
     }
 }

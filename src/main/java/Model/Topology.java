@@ -21,12 +21,22 @@ public class Topology {
      * layer terakhir -> output layer
      */
     private ArrayList<Integer> layers;
+    /**
+     * Initial weight for all nodes and bias
+     */
+    private double initialWeight;
+    /**
+     * True if initial weight is given, false if initial weight is not given
+     */
+    private boolean isInitialWeightSet;
 
     public Topology()
     {
         nodes = new ArrayList<>();
         weights = new ArrayList<>();
         layers = new ArrayList<>();
+        initialWeight = 0;
+        isInitialWeightSet = false;
     }
 
     public ArrayList<Node> getNodes() {
@@ -86,10 +96,20 @@ public class Topology {
     }
 
     /**
+     * Set the initial weight for all nodes and bias
+     * @param weight the weight for all nodes and bias
+     */
+    public void setInitialWeight(double weight)
+    {
+        initialWeight = weight;
+        isInitialWeightSet = true;
+    }
+
+    /**
      * Set the weight for all nodes and bias
      * @param weight the new weight
      */
-    public void setWeight(double weight)
+    private void setWeight(double weight)
     {
         for(Node node : nodes)
         {
@@ -101,11 +121,19 @@ public class Topology {
         }
     }
 
+    /**
+     * Connect all nodes in this topology
+     */
     public void connectAllNodes()
     {
         createNodes();
+        createWeights();
     }
 
+
+    /**
+     * Create nodes according to number of nodes in input layer, hidden layer, and output layer
+     */
     private void createNodes()
     {
         int layerSize = 0;
@@ -117,6 +145,48 @@ public class Topology {
             {
                 nodes.add(new Node(id));
                 id++;
+            }
+        }
+    }
+
+    /**
+     * Create weights between nodes.
+     */
+    private void createWeights()
+    {
+        int currentLayerSize = 0;
+        int nextLayerSize = 0;
+        int baseID = 0;
+        if(isInitialWeightSet)
+        {
+            for(int i=0; i<layers.size()-1; i++)
+            {
+                currentLayerSize = layers.get(i);
+                nextLayerSize = layers.get(i+1);
+                for(int j=0; j<currentLayerSize; j++)
+                {
+                    for(int k=0; k<nextLayerSize; k++)
+                    {
+                        weights.add(new Weight(nodes.get(baseID+j), nodes.get(baseID + currentLayerSize + k), initialWeight));
+                    }
+                }
+                baseID += currentLayerSize;
+            }
+        }
+        else // initial weight is not set
+        {
+            for(int i=0; i<layers.size()-1; i++)
+            {
+                currentLayerSize = layers.get(i);
+                nextLayerSize = layers.get(i+1);
+                for(int j=0; j<currentLayerSize; j++)
+                {
+                    for(int k=0; k<nextLayerSize; k++)
+                    {
+                        weights.add(new Weight(nodes.get(baseID+j), nodes.get(baseID + currentLayerSize + k)));
+                    }
+                }
+                baseID += currentLayerSize;
             }
         }
     }

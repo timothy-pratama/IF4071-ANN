@@ -19,10 +19,24 @@ public class Weight {
      */
     private double weight;
 
+    public Weight()
+    {
+        node1 = new Node();
+        node2 = new Node();
+        randomWeight();
+    }
+
+    public Weight(Node n1, Node n2, double weight)
+    {
+        node1 = n1;
+        node2 = n2;
+        this.weight = weight;
+    }
+
     /**
      * Assign random value between -0.1 and 0.1 for the weight
      */
-    public void randomWeight()
+    private void randomWeight()
     {
         double rangeMin = -0.1;
         double rangeMax = 0.1;

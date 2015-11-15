@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Random;
+
 /**
  * Created by timothy.pratama on 15-Nov-15.
  */
@@ -21,6 +23,26 @@ public class Node {
      * Bias value always 1
      */
     private double bias;
+
+    public Node()
+    {
+        error = 0;
+        target = 0;
+        output = 0;
+        bias = 0;
+    }
+
+    /**
+     * Random this node bias weight
+     */
+    private void randomBias()
+    {
+        double rangeMin = -0.1;
+        double rangeMax = 0.1;
+        Random r = new Random();
+
+        bias = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+    }
 
     /**
      * Compute the siegmoid value from x

@@ -268,4 +268,14 @@ public class Topology {
             }
         });
     }
+
+    /**
+     * Get the n-th output node
+     * @param n the index of output node, start from 0
+     * @return
+     */
+    public Node getOutputNode(int n)
+    {
+        return nodes.get(nodes.size()-layers.get(layers.size()-1)+n);
+    }
 }

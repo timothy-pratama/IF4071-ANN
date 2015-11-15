@@ -68,12 +68,10 @@ public class MultiLayerPerceptron extends Classifier {
         topology.addInputLayer(dataset.numAttributes() - 1);
         topology.addOutputLayer(dataset.numClasses());
 
+        /* Connect all nodes in this topology */
         connectAllNodes();
 
-        for(int i=0; i<topology.getWeights().size(); i++)
-        {
-            System.out.print(topology.getWeights().get(i));
-        }
+        /* Training MultiLayerPerceptron berdasarkan dataset */
     }
 
     /**

@@ -70,9 +70,10 @@ public class MultiLayerPerceptron extends Classifier {
 
         connectAllNodes();
 
-        System.out.println(dataset);
-        System.out.println(topology.getNodes());
-        System.out.println(topology.getWeights());
+        for(int i=0; i<topology.getWeights().size(); i++)
+        {
+            System.out.print(topology.getWeights().get(i));
+        }
     }
 
     /**

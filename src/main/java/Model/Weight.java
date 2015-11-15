@@ -68,4 +68,11 @@ public class Weight {
     public void setWeight(double weight) {
         this.weight = weight;
     }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("weight[").append(node1.getId()).append("][").append(node2.getId()).append("]: ").append(weight).append("\n");
+        return sb.toString();
+    }
 }

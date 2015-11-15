@@ -1,6 +1,8 @@
 package MultiLayerPerceptron;
 
+import Model.Node;
 import Model.Topology;
+import Model.Weight;
 import Util.Util;
 import weka.classifiers.Classifier;
 import weka.core.Capabilities;
@@ -63,14 +65,38 @@ public class MultiLayerPerceptron extends Classifier {
          * Jumlah input neuron = jumlah atribut dari data
          * Jumlah output neuron = jumlah kelas dari data
         */
-        System.out.println(dataset);
-        topology.addInputLayer(dataset.numAttributes()-1);
+        topology.addInputLayer(dataset.numAttributes() - 1);
         topology.addOutputLayer(dataset.numClasses());
+
+        connectAllNodes();
+    }
+
+    /**
+     * Makes all neurons in this topology fully connected
+     */
+    private void connectAllNodes()
+    {
+        topology.connectAllNodes();
     }
 
     @Override
     public Capabilities getCapabilities() {
-        return super.getCapabilities();
+        Capabilities result = super.getCapabilities();
+        result.disableAll();
+
+        // attributes
+        result.enable(Capabilities.Capability.NOMINAL_ATTRIBUTES);
+        result.enable(Capabilities.Capability.NUMERIC_ATTRIBUTES);
+        result.enable(Capabilities.Capability.DATE_ATTRIBUTES);
+        result.enable(Capabilities.Capability.MISSING_VALUES);
+
+        // class
+        result.enable(Capabilities.Capability.NOMINAL_CLASS);
+        result.enable(Capabilities.Capability.NUMERIC_CLASS);
+        result.enable(Capabilities.Capability.DATE_CLASS);
+        result.enable(Capabilities.Capability.MISSING_CLASS_VALUES);
+
+        return result;
     }
 
     @Override

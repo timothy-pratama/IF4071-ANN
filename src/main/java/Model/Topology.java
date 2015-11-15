@@ -100,4 +100,24 @@ public class Topology {
             w.setWeight(weight);
         }
     }
+
+    public void connectAllNodes()
+    {
+        createNodes();
+    }
+
+    private void createNodes()
+    {
+        int layerSize = 0;
+        int id = 0;
+        for(int i=0; i<layers.size(); i++)
+        {
+            layerSize = layers.get(i);
+            for(int j=0; j<layerSize; j++)
+            {
+                nodes.add(new Node(id));
+                id++;
+            }
+        }
+    }
 }

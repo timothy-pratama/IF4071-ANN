@@ -23,13 +23,27 @@ public class Node {
      * Bias value always 1
      */
     private double bias;
+    /**
+     * This node's ID
+     */
+    private int id;
 
     public Node()
     {
         error = 0;
         target = 0;
         output = 0;
-        bias = 0;
+        id = 0;
+        randomBias();
+    }
+
+    public Node(int id)
+    {
+        error = 0;
+        target = 0;
+        output = 0;
+        this.id = id;
+        randomBias();
     }
 
     /**
@@ -111,6 +125,25 @@ public class Node {
 
     public void setBias(double bias) {
         this.bias = bias;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("Node ").append(id).append("\n");
+        sb.append("bias: ").append(bias).append("\n");
+        sb.append("error: ").append(error).append("\n");
+        sb.append("target: ").append(target).append("\n");
+        sb.append("output: ").append(output).append("\n");
+        return sb.toString();
     }
 
     public static void main (String [] args)

@@ -106,18 +106,13 @@ public class Topology {
     }
 
     /**
-     * Set the weight for all nodes and bias
-     * @param weight the new weight
+     * Set the weight for all bias
      */
-    private void setWeight(double weight)
+    private void setBiasWeight()
     {
         for(Node node : nodes)
         {
-            node.setBias(weight);
-        }
-        for(Weight w : weights)
-        {
-            w.setWeight(weight);
+            node.setBias(initialWeight);
         }
     }
 
@@ -159,6 +154,7 @@ public class Topology {
         int baseID = 0;
         if(isInitialWeightSet)
         {
+            setBiasWeight();
             for(int i=0; i<layers.size()-1; i++)
             {
                 currentLayerSize = layers.get(i);

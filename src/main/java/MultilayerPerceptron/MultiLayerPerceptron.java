@@ -113,6 +113,7 @@ public class MultiLayerPerceptron extends Classifier {
         Topology topology = new Topology();
         topology.addHiddenLayer(1);
         topology.addHiddenLayer(2);
+        topology.setInitialWeight(0.0);
         MultiLayerPerceptron mlp = new MultiLayerPerceptron(topology);
         mlp.buildClassifier(dataset);
     }

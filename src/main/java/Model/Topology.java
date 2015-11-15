@@ -54,6 +54,38 @@ public class Topology {
     }
 
     /**
+     * Add a new hidden layer with n neurons
+     * @param n number of neurons
+     */
+    public void addHiddenLayer(int n)
+    {
+        layers.add(n);
+    }
+
+    /**
+     * Add a new input layer with n input attributes
+     * @param n number of input attributes
+     */
+    public void addInputLayer(int n)
+    {
+        layers.add(0, n);
+    }
+
+    /**
+     * add a new output layer with n classes
+     * @param n number of output class
+     */
+    public void addOutputLayer(int n)
+    {
+        layers.add(layers.size(), n);
+    }
+
+    public void removeLayer(int index)
+    {
+        layers.remove(index);
+    }
+
+    /**
      * Set the weight for all nodes and bias
      * @param weight the new weight
      */

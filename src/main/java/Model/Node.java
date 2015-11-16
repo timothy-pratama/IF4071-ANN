@@ -19,10 +19,14 @@ public class Node {
      */
     private double output;
     /**
-     * Bias weight for this node
-     * Bias value always 1
+     * Bias Weight for this node
      */
-    private double bias;
+    private double biasWeight;
+    /**
+     * Bias value for this node
+     * Default value = 1
+     */
+    private double biasValue;
     /**
      * This node's ID
      */
@@ -35,6 +39,7 @@ public class Node {
         output = 0;
         id = 0;
         randomBias();
+        biasValue = 1;
     }
 
     public Node(int id)
@@ -44,10 +49,11 @@ public class Node {
         output = 0;
         this.id = id;
         randomBias();
+        biasValue = 1;
     }
 
     /**
-     * Random this node bias weight
+     * Random this node biasWeight weight
      */
     private void randomBias()
     {
@@ -55,7 +61,7 @@ public class Node {
         double rangeMax = 0.1;
         Random r = new Random();
 
-        bias = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+        biasWeight = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
     }
 
     /**
@@ -119,12 +125,12 @@ public class Node {
         this.output = output;
     }
 
-    public double getBias() {
-        return bias;
+    public double getBiasWeight() {
+        return biasWeight;
     }
 
-    public void setBias(double bias) {
-        this.bias = bias;
+    public void setBiasWeight(double biasWeight) {
+        this.biasWeight = biasWeight;
     }
 
     public int getId() {
@@ -135,11 +141,19 @@ public class Node {
         this.id = id;
     }
 
+    public double getBiasValue() {
+        return biasValue;
+    }
+
+    public void setBiasValue(double biasValue) {
+        this.biasValue = biasValue;
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("Node ").append(id).append("\n");
-        sb.append("bias: ").append(bias).append("\n");
+        sb.append("biasWeight: ").append(biasWeight).append("\n");
         sb.append("error: ").append(error).append("\n");
         sb.append("target: ").append(target).append("\n");
         sb.append("output: ").append(output).append("\n");

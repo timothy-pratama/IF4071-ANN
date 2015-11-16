@@ -2,7 +2,6 @@ package MultiLayerPerceptron;
 
 import Model.Node;
 import Model.Topology;
-import Model.Weight;
 import Util.Util;
 import weka.classifiers.Classifier;
 import weka.core.Capabilities;
@@ -72,6 +71,17 @@ public class MultiLayerPerceptron extends Classifier {
         connectAllNodes();
 
         /* Training MultiLayerPerceptron berdasarkan dataset */
+        /* Tom Mitchell, page 110/421 */
+        /* Sort node2 ascending */
+        topology.sortWeight(false, true);
+
+        /* Propagate the input forward through the network */
+        Node currentNode;
+        currentNode = topology.getWeights().get(0).getNode2();
+        for(int i=0; i<topology.getWeights().size(); i++)
+        {
+            
+        }
     }
 
     /**
@@ -110,9 +120,7 @@ public class MultiLayerPerceptron extends Classifier {
     public static void main(String [] args) throws Exception {
         Instances dataset = Util.readARFF("weather.numeric.arff");
         Topology topology = new Topology();
-        topology.addHiddenLayer(1);
         topology.addHiddenLayer(2);
-        topology.setInitialWeight(0.0);
         MultiLayerPerceptron mlp = new MultiLayerPerceptron(topology);
         mlp.buildClassifier(dataset);
     }

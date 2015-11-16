@@ -30,26 +30,47 @@ public class Topology {
     /**
      * True if initial weight is given, false if initial weight is not given
      */
-    private boolean isInitialWeightSet;
+    private boolean useInitialWeight;
     /**
      * Jumlah iterasi pada saat training model
      */
     private double numIterations;
     /**
-     * True if termination condition based on iteration
-     * False if termination condition based on number of iterations
+     * True if termination condition based on number of iterations
+     * False if termination condition based on epoch error
      */
     private boolean useIteration;
+    /**
+     * Do training until epoch error under this value
+     */
+    private double epochErrorThreshold;
+    /**
+     * True if termination condition based on epoch error
+     * False if termination condition based on number of iterations
+     */
+    private boolean useErrorThreshold;
+    /**
+     * MultiLayerPerceptron learning rate
+     */
+    private double learningRate;
+    /**
+     * MultiLayerPerceptron momentumRate
+     */
+    private double momentumRate;
 
     public Topology()
     {
         nodes = new ArrayList<>();
         weights = new ArrayList<>();
         layers = new ArrayList<>();
-        initialWeight = 0;
-        isInitialWeightSet = false;
+        initialWeight = 0.0;
+        useInitialWeight = false;
         numIterations = 0;
         useIteration = false;
+        epochErrorThreshold = 0.0;
+        useErrorThreshold = false;
+        learningRate = 0.0;
+        momentumRate = 0.0;
     }
 
     public ArrayList<Node> getNodes() {
@@ -80,12 +101,12 @@ public class Topology {
         return initialWeight;
     }
 
-    public boolean isInitialWeightSet() {
-        return isInitialWeightSet;
+    public boolean isUseInitialWeight() {
+        return useInitialWeight;
     }
 
-    public void setInitialWeightSet(boolean isInitialWeightSet) {
-        this.isInitialWeightSet = isInitialWeightSet;
+    public void setUseInitialWeight(boolean isInitialWeightSet) {
+        this.useInitialWeight = isInitialWeightSet;
     }
 
     public double getNumIterations() {
@@ -102,6 +123,38 @@ public class Topology {
 
     public void setUseIteration(boolean useIteration) {
         this.useIteration = useIteration;
+    }
+
+    public double getEpochErrorThreshold() {
+        return epochErrorThreshold;
+    }
+
+    public void setEpochErrorThreshold(double epochErrorThreshold) {
+        this.epochErrorThreshold = epochErrorThreshold;
+    }
+
+    public boolean isUseErrorThreshold() {
+        return useErrorThreshold;
+    }
+
+    public void setUseErrorThreshold(boolean useErrorThreshold) {
+        this.useErrorThreshold = useErrorThreshold;
+    }
+
+    public double getLearningRate() {
+        return learningRate;
+    }
+
+    public void setLearningRate(double learningRate) {
+        this.learningRate = learningRate;
+    }
+
+    public double getMomentumRate() {
+        return momentumRate;
+    }
+
+    public void setMomentumRate(double momentumRate) {
+        this.momentumRate = momentumRate;
     }
 
     /**
@@ -137,23 +190,25 @@ public class Topology {
     }
 
     /**
-     * Set the initial weight for all nodes and bias
-     * @param weight the weight for all nodes and bias
-     */
-    public void setInitialWeight(double weight)
-    {
-        initialWeight = weight;
-        isInitialWeightSet = true;
-    }
-
-    /**
      * Set the weight for all bias
      */
     private void setBiasWeight()
     {
         for(Node node : nodes)
         {
-            node.setBias(initialWeight);
+            node.setBiasWeight(initialWeight);
+        }
+    }
+
+    /**
+     * Set the bias value for all nodes in this topology
+     * @param bias bias value for all nodes
+     */
+    public void setBiasValue(double bias)
+    {
+        for(Node n : nodes)
+        {
+            n.setBiasValue(bias);
         }
     }
 
@@ -193,7 +248,7 @@ public class Topology {
         int currentLayerSize = 0;
         int nextLayerSize = 0;
         int baseID = 0;
-        if(isInitialWeightSet)
+        if(useInitialWeight)
         {
             setBiasWeight();
             for(int i=0; i<layers.size()-1; i++)

@@ -1,0 +1,22 @@
+@relation weather
+
+@attribute temperature numeric
+@attribute humidity numeric
+@attribute windy {TRUE, FALSE}
+@attribute play {yes, no}
+
+@data
+85,85,FALSE,no
+80,90,TRUE,no
+83,86,FALSE,yes
+70,96,FALSE,yes
+68,80,FALSE,yes
+65,70,TRUE,no
+64,65,TRUE,yes
+72,95,FALSE,no
+69,70,FALSE,yes
+75,80,FALSE,yes
+75,70,TRUE,yes
+72,90,TRUE,yes
+81,75,FALSE,yes
+71,91,TRUE,no

@@ -2,6 +2,7 @@ package MultiLayerPerceptron;
 
 import Model.Node;
 import Model.Topology;
+import Model.Weight;
 import Util.Util;
 import weka.classifiers.Classifier;
 import weka.core.Capabilities;
@@ -70,17 +71,25 @@ public class MultiLayerPerceptron extends Classifier {
         /* Connect all nodes in this topology */
         connectAllNodes();
 
+        System.out.println(topology.getWeights());
+
         /* Training MultiLayerPerceptron berdasarkan dataset */
         /* Tom Mitchell, page 110/421 */
-        /* Sort node2 ascending */
-        topology.sortWeight(false, true);
 
-        /* Propagate the input forward through the network */
-        Node currentNode;
-        currentNode = topology.getWeights().get(0).getNode2();
-        for(int i=0; i<topology.getWeights().size(); i++)
+        for(int i=0; i<dataset.numInstances(); i++)
         {
-            
+            /* Propagate the input forward through the network */
+            /* Input the instance x to the network */
+            Instance instance = dataset.instance(i);
+            topology.initInputNodes(instance);
+
+            /* compute the output of every unit in the network */
+            topology.sortWeight(false, true);
+            for(int j=0; j<topology.getWeights().size(); j++)
+            {
+                Weight weight = topology.getWeights().get(j);
+                weight.getNode2().setOutput(weight.getNode2().getOutput() + (weight.getNode1().getOutput() * weight.getWeight()));
+            }
         }
     }
 
@@ -118,9 +127,10 @@ public class MultiLayerPerceptron extends Classifier {
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.numeric.arff");
+        Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
         Topology topology = new Topology();
         topology.addHiddenLayer(2);
+        topology.setInitialWeight(0.1);
         MultiLayerPerceptron mlp = new MultiLayerPerceptron(topology);
         mlp.buildClassifier(dataset);
     }

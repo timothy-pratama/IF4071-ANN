@@ -1,5 +1,8 @@
 package Model;
 
+import weka.core.Instance;
+import weka.core.Instances;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -99,6 +102,11 @@ public class Topology {
 
     public double getInitialWeight() {
         return initialWeight;
+    }
+
+    public void setInitialWeight(double initialWeight) {
+        this.initialWeight = initialWeight;
+        useInitialWeight = true;
     }
 
     public boolean isUseInitialWeight() {
@@ -284,16 +292,28 @@ public class Topology {
     }
 
     /**
+     * Init the input node using the given data
+     * @param data data for input to ANN
+     */
+    public void initInputNodes(Instance data)
+    {
+        for(int i=0; i<data.numAttributes()-1; i++)
+        {
+            nodes.get(i).setOutput(data.value(i));
+        }
+    }
+
+    /**
      * Sort weights based on node 1 or node 2, ascending or descending
-     * @param node1 Sort based on node 1
+     * @param useNode1 Sort based on node 1
      * @param ascending Sort ascending
      */
-    public void sortWeight(final boolean node1, final boolean ascending)
+    public void sortWeight(final boolean useNode1, final boolean ascending)
     {
         Collections.sort(weights, new Comparator<Weight>() {
             @Override
             public int compare(Weight o1, Weight o2) {
-                if(node1)
+                if(useNode1)
                 {
                     if(ascending)
                     {

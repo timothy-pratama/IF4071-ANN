@@ -31,6 +31,15 @@ public class Topology {
      * True if initial weight is given, false if initial weight is not given
      */
     private boolean isInitialWeightSet;
+    /**
+     * Jumlah iterasi pada saat training model
+     */
+    private double numIterations;
+    /**
+     * True if termination condition based on iteration
+     * False if termination condition based on number of iterations
+     */
+    private boolean useIteration;
 
     public Topology()
     {
@@ -39,6 +48,8 @@ public class Topology {
         layers = new ArrayList<>();
         initialWeight = 0;
         isInitialWeightSet = false;
+        numIterations = 0;
+        useIteration = false;
     }
 
     public ArrayList<Node> getNodes() {
@@ -63,6 +74,34 @@ public class Topology {
 
     public void setLayers(ArrayList<Integer> layers) {
         this.layers = layers;
+    }
+
+    public double getInitialWeight() {
+        return initialWeight;
+    }
+
+    public boolean isInitialWeightSet() {
+        return isInitialWeightSet;
+    }
+
+    public void setInitialWeightSet(boolean isInitialWeightSet) {
+        this.isInitialWeightSet = isInitialWeightSet;
+    }
+
+    public double getNumIterations() {
+        return numIterations;
+    }
+
+    public void setNumIterations(double numIterations) {
+        this.numIterations = numIterations;
+    }
+
+    public boolean isUseIteration() {
+        return useIteration;
+    }
+
+    public void setUseIteration(boolean useIteration) {
+        this.useIteration = useIteration;
     }
 
     /**

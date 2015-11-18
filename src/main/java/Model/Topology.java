@@ -303,6 +303,23 @@ public class Topology {
         }
     }
 
+    public void initOutputNodes(Instance data)
+    {
+        int classValue = (int) data.classValue();
+        for(int i=0; i<data.numClasses(); i++)
+        {
+            Node n = getOutputNode(i);
+            if(i == classValue)
+            {
+                n.setTarget(1);
+            }
+            else
+            {
+                n.setTarget(0);
+            }
+        }
+    }
+
     /**
      * Sort weights based on node 1 or node 2, ascending or descending
      * @param useNode1 Sort based on node 1

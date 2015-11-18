@@ -83,6 +83,7 @@ public class MultiLayerPerceptron extends Classifier {
             /* Input the instance x to the network */
             Instance instance = dataset.instance(i);
             topology.initInputNodes(instance);
+            topology.initOutputNodes(instance);
 
             /* compute the output of every unit in the network */
             topology.sortWeight(false, true);
@@ -91,9 +92,10 @@ public class MultiLayerPerceptron extends Classifier {
             topology.resetNodeInput();
             Set<Node> biasedNode = new HashSet<>(); /* kumpulan node yang punya bias */
 
-            /* Jumlah xi * wi */
+            /* Hitung input untuk setiap node */
             for(int j=0; j<topology.getWeights().size(); j++)
             {
+                /* Jumlah xi * wi */
                 Weight weight = topology.getWeights().get(j);
                 weight.getNode2().setInput(weight.getNode2().getInput() + (weight.getWeight() * weight.getNode1().getOutput()));
 
@@ -107,7 +109,15 @@ public class MultiLayerPerceptron extends Classifier {
             {
                 n.setInput(n.getInput() + (n.getBiasValue() * n.getBiasWeight()));
                 n.setOutput(Node.siegmoid(n.getInput()));
-                System.out.print(n);
+            }
+
+            /* Propagate the errors backward through the network */
+            /* Calculate each output node error term */
+            for(int j=0; j<topology.getLayers().get(topology.getLayers().size()-1); j++)
+            {
+                Node node = topology.getOutputNode(j);
+                double error = node.getOutput() * (1 - node.getOutput()) * (node.getTarget() - node.getOutput());
+                node.setError(error);
             }
             System.out.println();
         }

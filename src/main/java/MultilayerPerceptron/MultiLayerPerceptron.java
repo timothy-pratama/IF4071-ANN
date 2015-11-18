@@ -95,7 +95,7 @@ public class MultiLayerPerceptron extends Classifier {
             for(int j=0; j<topology.getWeights().size(); j++)
             {
                 Weight weight = topology.getWeights().get(j);
-                weight.getNode2().setInput(weight.getNode2().getInput() + weight.getWeight());
+                weight.getNode2().setInput(weight.getNode2().getInput() + (weight.getWeight() * weight.getNode1().getOutput()));
 
                 /* Ambil semua node yang bukan input node */
                 biasedNode.add(weight.getNode2());

@@ -415,9 +415,20 @@ public class Topology {
      */
     public void resetNodeInput()
     {
-        for(Node node: nodes)
+        for(Node node : nodes)
         {
             node.setInput(0);
+        }
+    }
+
+    /**
+     * Reset all node's error to 0
+     */
+    public void resetNodeError()
+    {
+        for(int i=0; i<layers.get(0); i++)
+        {
+            nodes.get(i).setError(0);
         }
     }
 }

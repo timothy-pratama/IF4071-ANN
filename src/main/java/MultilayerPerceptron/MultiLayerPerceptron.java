@@ -109,6 +109,7 @@ public class MultiLayerPerceptron extends Classifier {
             {
                 n.setInput(n.getInput() + (n.getBiasValue() * n.getBiasWeight()));
                 n.setOutput(Node.siegmoid(n.getInput()));
+                //TODO:: Output node 5 & 6 salah!
             }
 
             /* Propagate the errors backward through the network */
@@ -119,7 +120,23 @@ public class MultiLayerPerceptron extends Classifier {
                 double error = node.getOutput() * (1 - node.getOutput()) * (node.getTarget() - node.getOutput());
                 node.setError(error);
             }
-            System.out.println();
+
+            /* Calculate each hidden node error term */
+            topology.sortWeight(true, false);
+            topology.resetNodeError();
+
+            /* jumlah Whk * error k */
+            Node currentNode = topology.getWeights().get(0).getNode1();
+            for(Weight w : topology.getWeights())
+            {
+                w.getNode1().setError(w.getNode1().getError() + w.getNode2().getError() * w.getWeight());
+                if(currentNode.getId() != w.getNode1().getId())
+                {
+                    currentNode.setError(currentNode.getError() * currentNode.getOutput() * (1 - currentNode.getOutput()));
+                    currentNode = w.getNode1();
+                }
+            }
+            currentNode.setError(currentNode.getError() * currentNode.getOutput() * (1 - currentNode.getOutput()));
         }
     }
 
@@ -160,7 +177,7 @@ public class MultiLayerPerceptron extends Classifier {
         Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
         Topology topology = new Topology();
         topology.addHiddenLayer(2);
-        topology.setInitialWeight(0.0);
+        topology.setInitialWeight(0.1);
         MultiLayerPerceptron mlp = new MultiLayerPerceptron(topology);
         mlp.buildClassifier(dataset);
     }

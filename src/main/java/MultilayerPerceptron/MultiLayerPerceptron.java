@@ -71,8 +71,6 @@ public class MultiLayerPerceptron extends Classifier {
         /* Connect all nodes in this topology */
         connectAllNodes();
 
-        System.out.println(topology.getWeights());
-
         /* Training MultiLayerPerceptron berdasarkan dataset */
         /* Tom Mitchell, page 110/421 */
 
@@ -88,7 +86,7 @@ public class MultiLayerPerceptron extends Classifier {
             for(int j=0; j<topology.getWeights().size(); j++)
             {
                 Weight weight = topology.getWeights().get(j);
-                weight.getNode2().setOutput(weight.getNode2().getOutput() + (weight.getNode1().getOutput() * weight.getWeight()));
+                System.out.print(weight);
             }
         }
     }
@@ -127,7 +125,7 @@ public class MultiLayerPerceptron extends Classifier {
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
+        Instances dataset = Util.readARFF("weather.numeric.arff");
         Topology topology = new Topology();
         topology.addHiddenLayer(2);
         topology.setInitialWeight(0.1);

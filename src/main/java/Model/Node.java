@@ -19,6 +19,10 @@ public class Node {
      */
     private double output;
     /**
+     * Input for this node
+     */
+    private double input;
+    /**
      * Bias Weight for this node
      */
     private double biasWeight;
@@ -37,6 +41,7 @@ public class Node {
         error = 0;
         target = 0;
         output = 0;
+        input = 0;
         id = 0;
         randomBias();
         biasValue = 1;
@@ -47,6 +52,7 @@ public class Node {
         error = 0;
         target = 0;
         output = 0;
+        input = 0;
         this.id = id;
         randomBias();
         biasValue = 1;
@@ -149,6 +155,14 @@ public class Node {
         this.biasValue = biasValue;
     }
 
+    public double getInput() {
+        return input;
+    }
+
+    public void setInput(double input) {
+        this.input = input;
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -157,6 +171,7 @@ public class Node {
         sb.append("error: ").append(error).append("\n");
         sb.append("target: ").append(target).append("\n");
         sb.append("output: ").append(output).append("\n");
+        sb.append("input: ").append(input).append("\n");
         return sb.toString();
     }
 

@@ -86,8 +86,9 @@ public class MultiLayerPerceptron extends Classifier {
 
             /* compute the output of every unit in the network */
             topology.sortWeight(false, true);
-            topology.resetNodeInput();
 
+            /* Reset input node, init biased node */
+            topology.resetNodeInput();
             Set<Node> biasedNode = new HashSet<>(); /* kumpulan node yang punya bias */
 
             /* Jumlah xi * wi */
@@ -95,9 +96,20 @@ public class MultiLayerPerceptron extends Classifier {
             {
                 Weight weight = topology.getWeights().get(j);
                 weight.getNode2().setInput(weight.getNode2().getInput() + weight.getWeight());
+
+                /* Ambil semua node yang bukan input node */
+                biasedNode.add(weight.getNode2());
             }
 
             /* Tambah bias untuk setiap node */
+            /* Hitung output siegmoid dari setiap node */
+            for(Node n : biasedNode)
+            {
+                n.setInput(n.getInput() + (n.getBiasValue() * n.getBiasWeight()));
+                n.setOutput(Node.siegmoid(n.getInput()));
+                System.out.print(n);
+            }
+            System.out.println();
         }
     }
 
@@ -135,10 +147,10 @@ public class MultiLayerPerceptron extends Classifier {
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.numeric.arff");
+        Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
         Topology topology = new Topology();
         topology.addHiddenLayer(2);
-        topology.setInitialWeight(0.1);
+        topology.setInitialWeight(0.0);
         MultiLayerPerceptron mlp = new MultiLayerPerceptron(topology);
         mlp.buildClassifier(dataset);
     }

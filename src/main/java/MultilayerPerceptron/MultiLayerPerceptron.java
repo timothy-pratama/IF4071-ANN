@@ -11,6 +11,9 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by timothy.pratama on 15-Nov-15.
  */
@@ -83,11 +86,18 @@ public class MultiLayerPerceptron extends Classifier {
 
             /* compute the output of every unit in the network */
             topology.sortWeight(false, true);
+            topology.resetNodeInput();
+
+            Set<Node> biasedNode = new HashSet<>(); /* kumpulan node yang punya bias */
+
+            /* Jumlah xi * wi */
             for(int j=0; j<topology.getWeights().size(); j++)
             {
                 Weight weight = topology.getWeights().get(j);
-                System.out.print(weight);
+                weight.getNode2().setInput(weight.getNode2().getInput() + weight.getWeight());
             }
+
+            /* Tambah bias untuk setiap node */
         }
     }
 

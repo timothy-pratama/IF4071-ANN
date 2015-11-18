@@ -392,4 +392,15 @@ public class Topology {
     {
         return nodes.get(nodes.size()-layers.get(layers.size()-1)+n);
     }
+
+    /**
+     * Reset all node's input to 0
+     */
+    public void resetNodeInput()
+    {
+        for(Node node: nodes)
+        {
+            node.setInput(0);
+        }
+    }
 }

@@ -72,8 +72,8 @@ public class Topology {
         useIteration = false;
         epochErrorThreshold = 0.0;
         useErrorThreshold = false;
-        learningRate = 0.0;
-        momentumRate = 0.0;
+        learningRate = 0.1;
+        momentumRate = 0.1;
     }
 
     public ArrayList<Node> getNodes() {

@@ -28,7 +28,7 @@ public class Weight {
         node1 = new Node();
         node2 = new Node();
         randomWeight();
-        previousDeltaWeight = 0
+        previousDeltaWeight = 0;
     }
 
     public Weight(Node n1, Node n2)

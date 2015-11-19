@@ -11,9 +11,6 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Created by timothy.pratama on 15-Nov-15.
  */
@@ -89,28 +86,25 @@ public class MultiLayerPerceptron extends Classifier {
             topology.sortWeight(false, true);
 
             /* Reset input node, init biased node */
-            topology.resetNodeInput();
-            Set<Node> biasedNode = new HashSet<>(); /* kumpulan node yang punya bias */
+            topology.resetNodesInput();
 
             /* Hitung input untuk setiap node */
-            for(int j=0; j<topology.getWeights().size(); j++)
+            /* Propagate the input forward through the network */
+            /* Input instance x to the network and compute the output of every unit in the network */
+            System.out.println(topology.getWeights());
+            Node currentNode = topology.getWeights().get(0).getNode2();
+            for(Weight w : topology.getWeights())
             {
-                /* Jumlah xi * wi */
-                Weight weight = topology.getWeights().get(j);
-                weight.getNode2().setInput(weight.getNode2().getInput() + (weight.getWeight() * weight.getNode1().getOutput()));
-
-                /* Ambil semua node yang bukan input node */
-                biasedNode.add(weight.getNode2());
+                w.getNode2().setInput(w.getNode2().getInput() + w.getWeight() * w.getNode1().getOutput());
+                if(currentNode.getId() != w.getNode2().getId())
+                {
+                    currentNode.setInput(currentNode.getInput() + (currentNode.getBiasWeight() * currentNode.getBiasValue()));
+                    currentNode.setOutput(Node.siegmoid(currentNode.getInput()));
+                    currentNode = w.getNode2();
+                }
             }
-
-            /* Tambah bias untuk setiap node */
-            /* Hitung output siegmoid dari setiap node */
-            for(Node n : biasedNode)
-            {
-                n.setInput(n.getInput() + (n.getBiasValue() * n.getBiasWeight()));
-                n.setOutput(Node.siegmoid(n.getInput()));
-                //TODO:: Output node 5 & 6 salah!
-            }
+            currentNode.setInput(currentNode.getInput() + (currentNode.getBiasWeight() * currentNode.getBiasValue()));
+            currentNode.setOutput(Node.siegmoid(currentNode.getInput()));
 
             /* Propagate the errors backward through the network */
             /* Calculate each output node error term */
@@ -126,7 +120,7 @@ public class MultiLayerPerceptron extends Classifier {
             topology.resetNodeError();
 
             /* jumlah Whk * error k */
-            Node currentNode = topology.getWeights().get(0).getNode1();
+            currentNode = topology.getWeights().get(0).getNode1();
             for(Weight w : topology.getWeights())
             {
                 w.getNode1().setError(w.getNode1().getError() + w.getNode2().getError() * w.getWeight());
@@ -137,6 +131,7 @@ public class MultiLayerPerceptron extends Classifier {
                 }
             }
             currentNode.setError(currentNode.getError() * currentNode.getOutput() * (1 - currentNode.getOutput()));
+            System.out.println();
         }
     }
 

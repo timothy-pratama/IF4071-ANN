@@ -82,12 +82,15 @@ public class PerceptronTrainingRule extends Classifier {
                 int output = Node.sign(outputNode.getInput());
                 for (int j = 0; j < topology.getWeights().size(); j++) {
                     Weight weight = topology.getWeights().get(j);
-                    double delta = topology.getLearningRate() * (target - output) * weight.getNode1().getOutput();
+                    double delta = (topology.getLearningRate() * (target - output) * weight.getNode1().getOutput()) +
+                            topology.getMomentumRate()* weight.getPreviousDeltaWeight();
+                    weight.setPreviousDeltaWeight(delta);
                     weight.setWeight(weight.getWeight() + delta);
                 }
                 double biasWeight = outputNode.getBiasWeight();
                 double delta = (topology.getLearningRate() * (target - output) * outputNode.getBiasValue()) +
-                                topology.getMomentumRate()* previousdelta;
+                                topology.getMomentumRate()* outputNode.getPreviousDeltaWeight();
+                outputNode.setPreviousDeltaWeight(delta);
                 outputNode.setBiasWeight(biasWeight + delta);
                 topology.resetNodesInput();
                 for (int j = 0; j < topology.getWeights().size(); j++) {
@@ -98,7 +101,6 @@ public class PerceptronTrainingRule extends Classifier {
                 output = Node.sign(outputNode.getInput());
                 int squaredError = (output-target)*(output-target);
                 epochError += squaredError;
-                previousdelta = delta;
             }
             tries++;
         }
@@ -138,7 +140,7 @@ public class PerceptronTrainingRule extends Classifier {
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);
-        topology.setMomentumRate(0.6);
+        topology.setMomentumRate(0.0);
         topology.setEpochErrorThreshold(0);
         topology.setUseErrorThreshold(true);
         topology.setUseIteration(true);
@@ -146,7 +148,6 @@ public class PerceptronTrainingRule extends Classifier {
         PerceptronTrainingRule ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
         Util.classify("weather.nominal.classify.arff",ptr);
-
 
     }
 }

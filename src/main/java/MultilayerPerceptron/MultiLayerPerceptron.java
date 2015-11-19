@@ -77,103 +77,104 @@ public class MultiLayerPerceptron extends Classifier {
         /* Tom Mitchell, page 110/421 */
 
         //TODO: tambahin looping sampe error threshold | iterasi
-        for(int i=0; i<dataset.numInstances(); i++)
+        int iterations = 0; // number of iteration
+        while(true)
         {
-            /* Propagate the input forward through the network */
-            /* Input the instance x to the network */
-            Instance instance = dataset.instance(i);
-            topology.initInputNodes(instance);
-            topology.initOutputNodes(instance);
-
-            /* compute the output of every unit in the network */
-            topology.sortWeight(false, true);
-
-            /* Reset input node, init biased node */
-            topology.resetNodesInput();
-
-            /* Hitung input untuk setiap node */
-            /* Propagate the input forward through the network */
-            /* Input instance x to the network and compute the output of every unit in the network */
-            Node currentNode = topology.getWeights().get(0).getNode2();
-            for(Weight w : topology.getWeights())
+            for (int i = 0; i < dataset.numInstances(); i++)
             {
-                w.getNode2().setInput(w.getNode2().getInput() + w.getWeight() * w.getNode1().getOutput());
-                if(currentNode.getId() != w.getNode2().getId())
-                {
-                    currentNode.setInput(currentNode.getInput() + (currentNode.getBiasWeight() * currentNode.getBiasValue()));
-                    currentNode.setOutput(Node.siegmoid(currentNode.getInput()));
-                    currentNode = w.getNode2();
+                /* Propagate the input forward through the network */
+                /* Input the instance x to the network */
+                Instance instance = dataset.instance(i);
+                topology.initInputNodes(instance);
+                topology.initOutputNodes(instance);
+
+                /* compute the output of every unit in the network */
+                topology.sortWeight(false, true);
+
+                /* Reset input node, init biased node */
+                topology.resetNodesInput();
+
+                /* Hitung input untuk setiap node */
+                /* Propagate the input forward through the network */
+                /* Input instance x to the network and compute the output of every unit in the network */
+                Node currentNode = topology.getWeights().get(0).getNode2();
+                for (Weight w : topology.getWeights()) {
+                    w.getNode2().setInput(w.getNode2().getInput() + w.getWeight() * w.getNode1().getOutput());
+                    if (currentNode.getId() != w.getNode2().getId()) {
+                        currentNode.setInput(currentNode.getInput() + (currentNode.getBiasWeight() * currentNode.getBiasValue()));
+                        currentNode.setOutput(Node.siegmoid(currentNode.getInput()));
+                        currentNode = w.getNode2();
+                    }
                 }
-            }
-            currentNode.setInput(currentNode.getInput() + (currentNode.getBiasWeight() * currentNode.getBiasValue()));
-            currentNode.setOutput(Node.siegmoid(currentNode.getInput()));
+                currentNode.setInput(currentNode.getInput() + (currentNode.getBiasWeight() * currentNode.getBiasValue()));
+                currentNode.setOutput(Node.siegmoid(currentNode.getInput()));
 
-            /* Propagate the errors backward through the network */
-            /* Calculate each output node error term */
-            for(int j=0; j<topology.getLayers().get(topology.getLayers().size()-1); j++)
-            {
-                Node node = topology.getOutputNode(j);
-                double error = node.getOutput() * (1 - node.getOutput()) * (node.getTarget() - node.getOutput());
-                node.setError(error);
-            }
-
-            /* Calculate each hidden node error term */
-            topology.sortWeight(true, false);
-            topology.resetNodeError();
-
-            /* jumlah Whk * error k */
-            currentNode = topology.getWeights().get(0).getNode1();
-            for(Weight w : topology.getWeights())
-            {
-                w.getNode1().setError(w.getNode1().getError() + w.getNode2().getError() * w.getWeight());
-                if(currentNode.getId() != w.getNode1().getId())
-                {
-                    currentNode.setError(currentNode.getError() * currentNode.getOutput() * (1 - currentNode.getOutput()));
-                    currentNode = w.getNode1();
-                }
-            }
-            currentNode.setError(currentNode.getError() * currentNode.getOutput() * (1 - currentNode.getOutput()));
-
-            /* Update each network weight */
-            topology.sortWeight(false, true);
-
-            /* Update weight between 2 nodes */
-            for(Weight w : topology.getWeights())
-            {
-                double deltaWeight = topology.getLearningRate() * w.getNode2().getError() * w.getNode1().getOutput();
-                deltaWeight = deltaWeight + topology.getMomentumRate() * w.getPreviousDeltaWeight();
-                w.setWeight(w.getWeight() + deltaWeight);
-                w.setPreviousDeltaWeight(deltaWeight);
-            }
-
-            /* Update bias weight */
-            for(Node n : topology.getNodes())
-            {
-                double deltaWeight = topology.getLearningRate() * n.getBiasValue() * n.getError();
-                deltaWeight = deltaWeight + topology.getMomentumRate() * n.getPreviousDeltaWeight();
-                n.setBiasWeight(n.getBiasWeight() + deltaWeight);
-                n.setPreviousDeltaWeight(deltaWeight);
-            }
-
-            /* This section is for debugging only */
-            /*if(i == 3)
-            {
-                for(Node n : topology.getNodes())
-                {
-                    System.out.println(n);
+                /* Propagate the errors backward through the network */
+                /* Calculate each output node error term */
+                for (int j = 0; j < topology.getLayers().get(topology.getLayers().size() - 1); j++) {
+                    Node node = topology.getOutputNode(j);
+                    double error = node.getOutput() * (1 - node.getOutput()) * (node.getTarget() - node.getOutput());
+                    node.setError(error);
                 }
 
-                topology.sortWeight(true, true);
+                /* Calculate each hidden node error term */
+                topology.sortWeight(true, false);
+                topology.resetNodeError();
 
-                for(Weight w : topology.getWeights())
-                {
-                    System.out.print(w);
+                /* jumlah Whk * error k */
+                currentNode = topology.getWeights().get(0).getNode1();
+                for (Weight w : topology.getWeights()) {
+                    w.getNode1().setError(w.getNode1().getError() + w.getNode2().getError() * w.getWeight());
+                    if (currentNode.getId() != w.getNode1().getId()) {
+                        currentNode.setError(currentNode.getError() * currentNode.getOutput() * (1 - currentNode.getOutput()));
+                        currentNode = w.getNode1();
+                    }
+                }
+                currentNode.setError(currentNode.getError() * currentNode.getOutput() * (1 - currentNode.getOutput()));
+
+                /* Update each network weight */
+                topology.sortWeight(false, true);
+
+                /* Update weight between 2 nodes */
+                for (Weight w : topology.getWeights()) {
+                    double deltaWeight = topology.getLearningRate() * w.getNode2().getError() * w.getNode1().getOutput();
+                    deltaWeight = deltaWeight + topology.getMomentumRate() * w.getPreviousDeltaWeight();
+                    w.setWeight(w.getWeight() + deltaWeight);
+                    w.setPreviousDeltaWeight(deltaWeight);
                 }
 
-                break;
-            }*/
+                /* Update bias weight */
+                for (Node n : topology.getNodes()) {
+                    double deltaWeight = topology.getLearningRate() * n.getBiasValue() * n.getError();
+                    deltaWeight = deltaWeight + topology.getMomentumRate() * n.getPreviousDeltaWeight();
+                    n.setBiasWeight(n.getBiasWeight() + deltaWeight);
+                    n.setPreviousDeltaWeight(deltaWeight);
+                }
+            }
+            iterations++;
+            //TODO: Compute epoch error here!
+
+            if(topology.isUseErrorThreshold())
+            {
+
+            }
+
+            if(topology.isUseIteration())
+            {
+                if(iterations >= topology.getNumIterations())
+                {
+                    for(Node n : topology.getNodes())
+                    {
+                        System.out.print(n);
+                    }
+                    for(Weight w : topology.getWeights())
+                    {
+                        System.out.print(w);
+                    }
+                    break;
+                }
+            }
         }
-        //TODO: Tambahin bagian hitung error epoch!
     }
 
     /**
@@ -217,6 +218,7 @@ public class MultiLayerPerceptron extends Classifier {
         topology.setInitialWeight(0.1);
         topology.setLearningRate(0.1);
         topology.setMomentumRate(0.1);
+        topology.setNumIterations(2);
 
         MultiLayerPerceptron multiLayerPerceptron = new MultiLayerPerceptron(topology);
         multiLayerPerceptron.buildClassifier(dataset);

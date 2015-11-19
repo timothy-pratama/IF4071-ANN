@@ -122,6 +122,7 @@ public class Topology {
     }
 
     public void setNumIterations(int numIterations) {
+        useIteration = true;
         this.numIterations = numIterations;
     }
 
@@ -138,6 +139,7 @@ public class Topology {
     }
 
     public void setEpochErrorThreshold(double epochErrorThreshold) {
+        useErrorThreshold = true;
         this.epochErrorThreshold = epochErrorThreshold;
     }
 
@@ -422,11 +424,11 @@ public class Topology {
     }
 
     /**
-     * Reset all node's error to 0
+     * Reset all node's error to 0, except the nodes in the output layer
      */
     public void resetNodeError()
     {
-        for(int i=0; i<layers.get(0); i++)
+        for(int i=0; i<nodes.size()-layers.get(layers.size()-1); i++)
         {
             nodes.get(i).setError(0);
         }

@@ -413,7 +413,7 @@ public class Topology {
     /**
      * Reset all node's input to 0
      */
-    public void resetNodeInput()
+    public void resetNodesInput()
     {
         for(Node node : nodes)
         {

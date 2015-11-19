@@ -1,0 +1,11 @@
+@relation latihan1
+
+@attribute x1 numeric
+@attribute x2 numeric
+@attribute x3 numeric
+@attribute target {yes, no}
+
+@data
+1,0,1,yes
+0,-1,-1,no
+-1,-0.5,-1,no

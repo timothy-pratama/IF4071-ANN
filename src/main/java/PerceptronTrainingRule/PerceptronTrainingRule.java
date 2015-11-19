@@ -70,7 +70,7 @@ public class PerceptronTrainingRule extends Classifier {
                 topology.initInputNodes(instance);
 
                 //topology.sortWeight(false, true);
-                topology.resetNodeInput();
+                topology.resetNodesInput();
 
                 for (int j = 0; j < topology.getWeights().size(); j++) {
                     Weight weight = topology.getWeights().get(j);
@@ -86,7 +86,7 @@ public class PerceptronTrainingRule extends Classifier {
                 double biasWeight = outputNode.getBiasWeight();
                 double delta = topology.getLearningRate() * (target - output) * outputNode.getBiasValue();
                 outputNode.setBiasWeight(biasWeight + delta);
-                topology.resetNodeInput();
+                topology.resetNodesInput();
                 for (int j = 0; j < topology.getWeights().size(); j++) {
                     Weight weight = topology.getWeights().get(j);
                     weight.getNode2().setInput(weight.getNode2().getInput() + (weight.getNode1().getOutput() * weight.getWeight()));

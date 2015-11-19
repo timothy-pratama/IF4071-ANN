@@ -35,6 +35,10 @@ public class Node {
      * This node's ID
      */
     private int id;
+    /**
+     * This node previous delta weight. Used for calculation using momentum
+     */
+    private double previousDeltaWeight;
 
     public Node()
     {
@@ -45,6 +49,7 @@ public class Node {
         id = 0;
         randomBias();
         biasValue = 1;
+        previousDeltaWeight = 0;
     }
 
     public Node(int id)
@@ -56,6 +61,7 @@ public class Node {
         this.id = id;
         randomBias();
         biasValue = 1;
+        previousDeltaWeight = 0;
     }
 
     /**
@@ -161,6 +167,14 @@ public class Node {
 
     public void setInput(double input) {
         this.input = input;
+    }
+
+    public double getPreviousDeltaWeight() {
+        return previousDeltaWeight;
+    }
+
+    public void setPreviousDeltaWeight(double previousDeltaWeight) {
+        this.previousDeltaWeight = previousDeltaWeight;
     }
 
     @Override

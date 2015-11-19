@@ -117,7 +117,7 @@ public class Topology {
         this.useInitialWeight = isInitialWeightSet;
     }
 
-    public double getNumIterations() {
+    public int getNumIterations() {
         return numIterations;
     }
 

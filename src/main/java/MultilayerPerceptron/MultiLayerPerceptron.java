@@ -5,27 +5,24 @@ import Model.Topology;
 import Model.Weight;
 import Util.Util;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.EvaluationUtils;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by timothy.pratama on 15-Nov-15.
  */
-public class MultiLayerPerceptron extends Classifier {
+public class MultiLayerPerceptron extends Classifier implements Serializable {
     private Topology topology;
     private Instances dataset;
     private NominalToBinary nominalToBinaryFilter;
-
-    public MultiLayerPerceptron()
-    {
-        topology = new Topology();
-        nominalToBinaryFilter = new NominalToBinary();
-    }
 
     MultiLayerPerceptron(Topology t)
     {
@@ -75,8 +72,6 @@ public class MultiLayerPerceptron extends Classifier {
 
         /* Training MultiLayerPerceptron berdasarkan dataset */
         /* Tom Mitchell, page 110/421 */
-
-        //TODO: tambahin looping sampe error threshold | iterasi
         int iterations = 0; // number of iteration
         while(true)
         {
@@ -151,26 +146,32 @@ public class MultiLayerPerceptron extends Classifier {
                     n.setPreviousDeltaWeight(deltaWeight);
                 }
             }
-            iterations++;
-            //TODO: Compute epoch error here!
+
+            /* Check if termination condition is satisfied */
+            if(topology.isUseIteration())
+            {
+                iterations++;
+                System.out.println(iterations);
+                if(iterations >= topology.getNumIterations())
+                {
+                    break;
+                }
+            }
 
             if(topology.isUseErrorThreshold())
             {
-
-            }
-
-            if(topology.isUseIteration())
-            {
-                if(iterations >= topology.getNumIterations())
+                double epochError = 0;
+                for(int i=0; i<dataset.numInstances(); i++)
                 {
-                    for(Node n : topology.getNodes())
-                    {
-                        System.out.print(n);
-                    }
-                    for(Weight w : topology.getWeights())
-                    {
-                        System.out.print(w);
-                    }
+                    Instance instance = dataset.instance(i);
+                    Node outputNode = topology.getOutputNode((int)classifyInstance(instance));
+                    epochError = epochError + Math.pow(outputNode.getTarget() - outputNode.getOutput(),2);
+                }
+                epochError = epochError / 2;
+                System.out.println(epochError);
+
+                if (epochError <= topology.getEpochErrorThreshold())
+                {
                     break;
                 }
             }
@@ -207,20 +208,63 @@ public class MultiLayerPerceptron extends Classifier {
 
     @Override
     public double classifyInstance(Instance instance) throws Exception {
-        return super.classifyInstance(instance);
+        double classIndex = 0;
+
+        topology.initInputNodes(instance);
+        topology.initOutputNodes(instance);
+
+        /* compute the output of every unit in the network */
+        topology.sortWeight(false, true);
+
+        /* Reset input node, init biased node */
+        topology.resetNodesInput();
+
+        /* Hitung input untuk setiap node */
+        /* Propagate the input forward through the network */
+        /* Input instance x to the network and compute the output of every unit in the network */
+        Node currentNode = topology.getWeights().get(0).getNode2();
+        for (Weight w : topology.getWeights()) {
+            w.getNode2().setInput(w.getNode2().getInput() + w.getWeight() * w.getNode1().getOutput());
+            if (currentNode.getId() != w.getNode2().getId()) {
+                currentNode.setInput(currentNode.getInput() + (currentNode.getBiasWeight() * currentNode.getBiasValue()));
+                currentNode.setOutput(Node.siegmoid(currentNode.getInput()));
+                currentNode = w.getNode2();
+            }
+        }
+        currentNode.setInput(currentNode.getInput() + (currentNode.getBiasWeight() * currentNode.getBiasValue()));
+        currentNode.setOutput(Node.siegmoid(currentNode.getInput()));
+
+        double maxOutput = 0;
+        double maxIndex = 0;
+        for (int i = 0; i < topology.getLayers().get(topology.getLayers().size() - 1); i++)
+        {
+            Node outputNode = topology.getOutputNode(i);
+            if(outputNode.getOutput() > maxOutput)
+            {
+                maxOutput = outputNode.getOutput();
+                maxIndex = i;
+            }
+        }
+
+        return maxIndex;
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
+        Instances dataset = Util.readARFF("iris.2D.arff");
 
         Topology topology = new Topology();
         topology.addHiddenLayer(2);
         topology.setInitialWeight(0.1);
         topology.setLearningRate(0.1);
         topology.setMomentumRate(0.1);
-        topology.setNumIterations(2);
+//        topology.setNumIterations(2000);
+        topology.setEpochErrorThreshold(0.5);
 
         MultiLayerPerceptron multiLayerPerceptron = new MultiLayerPerceptron(topology);
         multiLayerPerceptron.buildClassifier(dataset);
+
+        Evaluation eval = Util.crossValidationTest(dataset, new MultiLayerPerceptron(topology));
+        System.out.println(eval.toMatrixString());
+        System.out.println(eval.toSummaryString());
     }
 }

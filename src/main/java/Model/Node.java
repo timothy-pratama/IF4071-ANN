@@ -1,11 +1,12 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
  * Created by timothy.pratama on 15-Nov-15.
  */
-public class Node {
+public class Node implements Serializable{
     /**
      * Error for this node
      */

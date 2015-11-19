@@ -270,13 +270,12 @@ public class Util {
             for(int i=0; i<input.numInstances(); i++)
             {
                 double classLabel = classifier.classifyInstance(input.instance(i));
-                input.instance(i).setClassValue(classLabel);
                 System.out.println("Instance: " + input.instance(i));
                 System.out.println("Class: " + input.classAttribute().value((int)classLabel));
             }
 
             BufferedWriter writer = new BufferedWriter(
-                    new FileWriter(pathClassifyResult + "labeled." + filename));
+            new FileWriter(pathClassifyResult + "labeled." + filename));
             writer.write(input.toString());
             writer.newLine();
             writer.flush();

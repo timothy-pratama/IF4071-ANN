@@ -3,6 +3,7 @@ package Model;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,7 +11,7 @@ import java.util.Comparator;
 /**
  * Created by timothy.pratama on 15-Nov-15.
  */
-public class Topology {
+public class Topology implements Serializable{
     /**
      * Semua node yang ada di topologi ini
      */

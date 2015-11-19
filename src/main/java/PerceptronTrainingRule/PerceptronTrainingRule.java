@@ -11,10 +11,12 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
 
+import java.io.Serializable;
+
 /**
  * Created by timothy.pratama on 07-Nov-15.
  */
-public class PerceptronTrainingRule extends Classifier {
+public class PerceptronTrainingRule extends Classifier implements Serializable{
     private Topology topology;
     private Instances dataset;
     private NominalToBinary nominalToBinaryFilter = new NominalToBinary();

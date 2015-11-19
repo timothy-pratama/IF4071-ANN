@@ -5,10 +5,12 @@ import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.io.Serializable;
+
 /**
  * Created by timothy.pratama on 07-Nov-15.
  */
-public class DeltaTrainingRule extends Classifier {
+public class DeltaTrainingRule extends Classifier implements Serializable{
     @Override
     public void buildClassifier(Instances data) throws Exception {
 

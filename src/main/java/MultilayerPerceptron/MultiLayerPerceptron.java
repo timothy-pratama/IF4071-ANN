@@ -91,7 +91,6 @@ public class MultiLayerPerceptron extends Classifier {
             /* Hitung input untuk setiap node */
             /* Propagate the input forward through the network */
             /* Input instance x to the network and compute the output of every unit in the network */
-            System.out.println(topology.getWeights());
             Node currentNode = topology.getWeights().get(0).getNode2();
             for(Weight w : topology.getWeights())
             {
@@ -131,7 +130,43 @@ public class MultiLayerPerceptron extends Classifier {
                 }
             }
             currentNode.setError(currentNode.getError() * currentNode.getOutput() * (1 - currentNode.getOutput()));
-            System.out.println();
+
+            /* Update each network weight */
+            topology.sortWeight(false, true);
+            double previousDeltaWeight = 0;
+            //TODO: previous delta weight nya masih salah! Harusnya bentuknya array, tiap node & weight ada previousnya
+
+            /* Update weight between 2 nodes */
+            for(Weight w : topology.getWeights())
+            {
+                double deltaWeight = topology.getLearningRate() * w.getNode2().getError() * w.getNode1().getOutput();
+                deltaWeight = deltaWeight + topology.getMomentumRate() * previousDeltaWeight;
+                w.setWeight(w.getWeight() + deltaWeight);
+                //previousDeltaWeight = deltaWeight;
+            }
+
+            /* Update bias weight */
+            previousDeltaWeight = 0;
+            for(Node n : topology.getNodes())
+            {
+                double deltaWeight = topology.getLearningRate() * n.getBiasValue() * n.getError();
+                deltaWeight = deltaWeight + topology.getMomentumRate() * previousDeltaWeight;
+                n.setBiasWeight(n.getBiasWeight() + deltaWeight);
+                //previousDeltaWeight = deltaWeight;
+            }
+
+            for(Node n : topology.getNodes())
+            {
+                System.out.println(n);
+            }
+
+            topology.sortWeight(true, true);
+            for(Weight w : topology.getWeights())
+            {
+                System.out.print(w);
+            }
+
+            break; //for debugging only
         }
     }
 
@@ -170,10 +205,14 @@ public class MultiLayerPerceptron extends Classifier {
 
     public static void main(String [] args) throws Exception {
         Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
+
         Topology topology = new Topology();
         topology.addHiddenLayer(2);
         topology.setInitialWeight(0.1);
-        MultiLayerPerceptron mlp = new MultiLayerPerceptron(topology);
-        mlp.buildClassifier(dataset);
+        topology.setLearningRate(0.1);
+        topology.setMomentumRate(0.1);
+
+        MultiLayerPerceptron multiLayerPerceptron = new MultiLayerPerceptron(topology);
+        multiLayerPerceptron.buildClassifier(dataset);
     }
 }

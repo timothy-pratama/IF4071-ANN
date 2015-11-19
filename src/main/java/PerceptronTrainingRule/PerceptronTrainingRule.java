@@ -98,7 +98,7 @@ public class PerceptronTrainingRule extends Classifier {
             }
             tries++;
         }
-        while(epochError > 0 && tries < 100);
+        while((epochError > topology.getEpochErrorThreshold() || !topology.isUseErrorThreshold()) && (tries < topology.getNumIterations() || !topology.isUseIteration()));
 
     }
 
@@ -121,10 +121,15 @@ public class PerceptronTrainingRule extends Classifier {
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("latihan1.arff");
+        Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);
+        topology.setMomentumRate(1.0);
+        topology.setEpochErrorThreshold(0);
+        topology.setUseErrorThreshold(true);
+        topology.setUseIteration(true);
+        topology.setNumIterations(10);
         PerceptronTrainingRule ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
     }

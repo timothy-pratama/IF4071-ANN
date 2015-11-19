@@ -18,12 +18,17 @@ public class Weight {
      * The weight for this node
      */
     private double weight;
+    /**
+     * This node previous delta weight. Used for calculation using momentum
+     */
+    private double previousDeltaWeight;
 
     public Weight()
     {
         node1 = new Node();
         node2 = new Node();
         randomWeight();
+        previousDeltaWeight = 0
     }
 
     public Weight(Node n1, Node n2)
@@ -31,6 +36,7 @@ public class Weight {
         node1 = n1;
         node2 = n2;
         randomWeight();
+        previousDeltaWeight = 0;
     }
 
     public Weight(Node n1, Node n2, double weight)
@@ -38,6 +44,7 @@ public class Weight {
         node1 = n1;
         node2 = n2;
         this.weight = weight;
+        previousDeltaWeight = 0;
     }
 
     /**
@@ -74,6 +81,14 @@ public class Weight {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public double getPreviousDeltaWeight() {
+        return previousDeltaWeight;
+    }
+
+    public void setPreviousDeltaWeight(double previousDeltaWeight) {
+        this.previousDeltaWeight = previousDeltaWeight;
     }
 
     @Override

@@ -11,6 +11,8 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
 
+import java.util.ArrayList;
+
 /**
  * Created by timothy.pratama on 15-Nov-15.
  */

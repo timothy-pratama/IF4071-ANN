@@ -9,5 +9,5 @@
 @data
 sunny,hot,high,FALSE,no
 sunny,hot,high,TRUE,no
-overcast,hot,high,FALSE,yes
+overcast,hot,high,FALSE,no
 rainy,mild,high,FALSE,yes

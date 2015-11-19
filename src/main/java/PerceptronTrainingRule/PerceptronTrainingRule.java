@@ -60,8 +60,10 @@ public class PerceptronTrainingRule extends Classifier {
 
         int epochError;
         int tries = 0;
+        double previousdelta = 0.0;
         Node outputNode = topology.getOutputNode(0);
         outputNode.setBiasWeight(0.0);
+        double treshold = topology.isUseErrorThreshold()?topology.getEpochErrorThreshold():0.0;
         do {
             epochError = 0;
             for (int i = 0; i < dataset.numInstances(); i++) {
@@ -80,11 +82,15 @@ public class PerceptronTrainingRule extends Classifier {
                 int output = Node.sign(outputNode.getInput());
                 for (int j = 0; j < topology.getWeights().size(); j++) {
                     Weight weight = topology.getWeights().get(j);
-                    double delta = topology.getLearningRate() * (target - output) * weight.getNode1().getOutput();
+                    double delta = (topology.getLearningRate() * (target - output) * weight.getNode1().getOutput()) +
+                            topology.getMomentumRate()* weight.getPreviousDeltaWeight();
+                    weight.setPreviousDeltaWeight(delta);
                     weight.setWeight(weight.getWeight() + delta);
                 }
                 double biasWeight = outputNode.getBiasWeight();
-                double delta = topology.getLearningRate() * (target - output) * outputNode.getBiasValue();
+                double delta = (topology.getLearningRate() * (target - output) * outputNode.getBiasValue()) +
+                                topology.getMomentumRate()* outputNode.getPreviousDeltaWeight();
+                outputNode.setPreviousDeltaWeight(delta);
                 outputNode.setBiasWeight(biasWeight + delta);
                 topology.resetNodesInput();
                 for (int j = 0; j < topology.getWeights().size(); j++) {
@@ -98,13 +104,23 @@ public class PerceptronTrainingRule extends Classifier {
             }
             tries++;
         }
-        while((epochError > topology.getEpochErrorThreshold() || !topology.isUseErrorThreshold()) && (tries < topology.getNumIterations() || !topology.isUseIteration()));
+        while((epochError > treshold) && (!topology.isUseIteration() || (tries < topology.getNumIterations())));
 
     }
 
     @Override
     public double classifyInstance(Instance instance) throws Exception {
-        return super.classifyInstance(instance);
+        topology.initInputNodes(instance);
+        Node outputNode = topology.getOutputNode(0);
+        topology.resetNodesInput();
+
+        for (int j = 0; j < topology.getWeights().size(); j++) {
+            Weight weight = topology.getWeights().get(j);
+            weight.getNode2().setInput(weight.getNode2().getInput() + (weight.getNode1().getOutput() * weight.getWeight()));
+        }
+        outputNode.setInput(outputNode.getInput() + (outputNode.getBiasValue() * outputNode.getBiasWeight()));
+        int output = (Node.sign(outputNode.getInput())==-1)?0:1;
+        return (double)output;
     }
 
     @Override
@@ -115,22 +131,23 @@ public class PerceptronTrainingRule extends Classifier {
         result.enable(Capabilities.Capability.NOMINAL_ATTRIBUTES);
         result.enable(Capabilities.Capability.NUMERIC_ATTRIBUTES);
         result.enable(Capabilities.Capability.NOMINAL_CLASS);
-        result.enable(Capabilities.Capability.NUMERIC_CLASS);
 
         return result;
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
+        Instances dataset = Util.readARFF("weather.nominal.arff");
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);
-        topology.setMomentumRate(1.0);
+        topology.setMomentumRate(0.0);
         topology.setEpochErrorThreshold(0);
         topology.setUseErrorThreshold(true);
         topology.setUseIteration(true);
         topology.setNumIterations(10);
         PerceptronTrainingRule ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
+        Util.classify("weather.nominal.classify.arff",ptr);
+
     }
 }

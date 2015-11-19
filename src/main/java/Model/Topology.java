@@ -46,7 +46,7 @@ public class Topology {
     /**
      * Do training until epoch error under this value
      */
-    private double epochErrorThreshold;
+    private int epochErrorThreshold;
     /**
      * True if termination condition based on epoch error
      * False if termination condition based on number of iterations

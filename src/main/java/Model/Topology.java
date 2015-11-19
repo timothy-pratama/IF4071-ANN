@@ -37,7 +37,7 @@ public class Topology {
     /**
      * Jumlah iterasi pada saat training model
      */
-    private double numIterations;
+    private int numIterations;
     /**
      * True if termination condition based on number of iterations
      * False if termination condition based on epoch error
@@ -121,7 +121,7 @@ public class Topology {
         return numIterations;
     }
 
-    public void setNumIterations(double numIterations) {
+    public void setNumIterations(int numIterations) {
         this.numIterations = numIterations;
     }
 

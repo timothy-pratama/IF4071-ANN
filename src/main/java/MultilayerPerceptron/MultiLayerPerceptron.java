@@ -76,6 +76,7 @@ public class MultiLayerPerceptron extends Classifier {
         /* Training MultiLayerPerceptron berdasarkan dataset */
         /* Tom Mitchell, page 110/421 */
 
+        //TODO: tambahin looping sampe error threshold | iterasi
         for(int i=0; i<dataset.numInstances(); i++)
         {
             /* Propagate the input forward through the network */
@@ -135,41 +136,44 @@ public class MultiLayerPerceptron extends Classifier {
 
             /* Update each network weight */
             topology.sortWeight(false, true);
-            double previousDeltaWeight = 0;
-            //TODO: previous delta weight nya masih salah! Harusnya bentuknya array, tiap node & weight ada previousnya
 
             /* Update weight between 2 nodes */
             for(Weight w : topology.getWeights())
             {
                 double deltaWeight = topology.getLearningRate() * w.getNode2().getError() * w.getNode1().getOutput();
-                deltaWeight = deltaWeight + topology.getMomentumRate() * previousDeltaWeight;
+                deltaWeight = deltaWeight + topology.getMomentumRate() * w.getPreviousDeltaWeight();
                 w.setWeight(w.getWeight() + deltaWeight);
-                //previousDeltaWeight = deltaWeight;
+                w.setPreviousDeltaWeight(deltaWeight);
             }
 
             /* Update bias weight */
-            previousDeltaWeight = 0;
             for(Node n : topology.getNodes())
             {
                 double deltaWeight = topology.getLearningRate() * n.getBiasValue() * n.getError();
-                deltaWeight = deltaWeight + topology.getMomentumRate() * previousDeltaWeight;
+                deltaWeight = deltaWeight + topology.getMomentumRate() * n.getPreviousDeltaWeight();
                 n.setBiasWeight(n.getBiasWeight() + deltaWeight);
-                //previousDeltaWeight = deltaWeight;
+                n.setPreviousDeltaWeight(deltaWeight);
             }
 
-            for(Node n : topology.getNodes())
+            /* This section is for debugging only */
+            /*if(i == 3)
             {
-                System.out.println(n);
-            }
+                for(Node n : topology.getNodes())
+                {
+                    System.out.println(n);
+                }
 
-            topology.sortWeight(true, true);
-            for(Weight w : topology.getWeights())
-            {
-                System.out.print(w);
-            }
+                topology.sortWeight(true, true);
 
-            break; //for debugging only
+                for(Weight w : topology.getWeights())
+                {
+                    System.out.print(w);
+                }
+
+                break;
+            }*/
         }
+        //TODO: Tambahin bagian hitung error epoch!
     }
 
     /**

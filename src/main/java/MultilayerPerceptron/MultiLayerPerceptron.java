@@ -250,21 +250,22 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("iris.2D.arff");
+        Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
 
         Topology topology = new Topology();
         topology.addHiddenLayer(2);
         topology.setInitialWeight(0.1);
         topology.setLearningRate(0.1);
         topology.setMomentumRate(0.1);
-//        topology.setNumIterations(2000);
+        topology.setNumIterations(2000000);
         topology.setEpochErrorThreshold(0.5);
 
         MultiLayerPerceptron multiLayerPerceptron = new MultiLayerPerceptron(topology);
         multiLayerPerceptron.buildClassifier(dataset);
 
-        Evaluation eval = Util.crossValidationTest(dataset, new MultiLayerPerceptron(topology));
-        System.out.println(eval.toMatrixString());
-        System.out.println(eval.toSummaryString());
+//        Evaluation eval = Util.crossValidationTest(dataset, new MultiLayerPerceptron(topology));
+        Util.classify("simplified.weather.numeric.arff", new MultiLayerPerceptron(topology));
+//        System.out.println(eval.toMatrixString());
+//        System.out.println(eval.toSummaryString());
     }
 }

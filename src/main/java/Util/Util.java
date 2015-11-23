@@ -261,11 +261,11 @@ public class Util {
         return null;
     }
 
-    public static void classify(String filename, Classifier classifier)
+    public static void classify(Instances dataset, Classifier classifier, String outputFilename)
     {
         try
         {
-            Instances input = readARFF(filename);
+            Instances input = new Instances(dataset);
             input.setClassIndex(input.numAttributes()-1);
             for(int i=0; i<input.numInstances(); i++)
             {
@@ -275,7 +275,7 @@ public class Util {
             }
 
             BufferedWriter writer = new BufferedWriter(
-            new FileWriter(pathClassifyResult + "labeled." + filename));
+            new FileWriter(pathClassifyResult + "labeled." + outputFilename));
             writer.write(input.toString());
             writer.newLine();
             writer.flush();
@@ -373,6 +373,7 @@ public class Util {
         System.out.println(Util.loadModel("id3_weather_nominal.model").toString());
 
         System.out.println("\n========== Classifying Model ==========");
-        Util.classify("weather.nominal.classify.arff", classifier);
+        dataSet = readARFF("weather.nominal.arff");
+        Util.classify(dataSet, classifier, "weather.nominal.arff");
     }
 }

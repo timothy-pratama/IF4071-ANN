@@ -1,23 +1,25 @@
-@relation weather
+@relation weather-weka.filters.unsupervised.attribute.NominalToBinary-Rfirst-last-weka.filters.unsupervised.attribute.Normalize-S1.0-T0.0
 
-@attribute outlook {sunny,overcast,rainy}
+@attribute outlook=sunny numeric
+@attribute outlook=overcast numeric
+@attribute outlook=rainy numeric
 @attribute temperature numeric
 @attribute humidity numeric
-@attribute windy {TRUE,FALSE}
+@attribute windy numeric
 @attribute play {yes,no}
 
 @data
-sunny,85,85,FALSE,no
-sunny,80,90,TRUE,no
-overcast,83,86,FALSE,yes
-rainy,70,96,FALSE,yes
-rainy,68,80,FALSE,yes
-rainy,65,70,TRUE,no
-overcast,64,65,TRUE,yes
-sunny,72,95,FALSE,no
-sunny,69,70,FALSE,yes
-rainy,75,80,FALSE,yes
-sunny,75,70,TRUE,yes
-overcast,72,90,TRUE,yes
-overcast,81,75,FALSE,yes
-rainy,71,91,TRUE,no
+1,0,0,1,0.645161,1,no
+1,0,0,0.761905,0.806452,0,no
+0,1,0,0.904762,0.677419,1,yes
+0,0,1,0.285714,1,1,yes
+0,0,1,0.190476,0.483871,1,yes
+0,0,1,0.047619,0.16129,0,no
+0,1,0,0,0,0,yes
+1,0,0,0.380952,0.967742,1,no
+1,0,0,0.238095,0.16129,1,yes
+0,0,1,0.52381,0.483871,1,yes
+1,0,0,0.52381,0.16129,0,yes
+0,1,0,0.380952,0.806452,0,yes
+0,1,0,0.809524,0.322581,1,yes
+0,0,1,0.333333,0.83871,0,no

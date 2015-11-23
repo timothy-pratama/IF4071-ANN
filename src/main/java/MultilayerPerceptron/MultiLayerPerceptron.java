@@ -12,6 +12,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
+import weka.filters.unsupervised.attribute.Normalize;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
     private Topology topology;
     private Instances dataset;
     private NominalToBinary nominalToBinaryFilter;
+    private Normalize normalizeFilter;
 
     MultiLayerPerceptron(Topology t)
     {
         topology = t;
         nominalToBinaryFilter = new NominalToBinary();
+        normalizeFilter = new Normalize();
     }
 
     public Topology getTopology() {
@@ -59,6 +62,10 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
         /* filter dataset, convert nominal ke binary */
         nominalToBinaryFilter.setInputFormat(dataset);
         dataset = Filter.useFilter(dataset, nominalToBinaryFilter);
+
+        /* Normalize dataset */
+        normalizeFilter.setInputFormat(dataset);
+        dataset = Filter.useFilter(dataset, normalizeFilter);
 
         /* Update topologi dengan input neuron & output neuron
          * Jumlah input neuron = jumlah atribut dari data
@@ -151,7 +158,7 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
             if(topology.isUseIteration())
             {
                 iterations++;
-                System.out.println(iterations);
+//                System.out.println(iterations);
                 if(iterations >= topology.getNumIterations())
                 {
                     break;
@@ -168,7 +175,7 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
                     epochError = epochError + Math.pow(outputNode.getTarget() - outputNode.getOutput(),2);
                 }
                 epochError = epochError / 2;
-                System.out.println(epochError);
+//                System.out.println(epochError);
 
                 if (epochError <= topology.getEpochErrorThreshold())
                 {
@@ -208,6 +215,9 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
 
     @Override
     public double classifyInstance(Instance instance) throws Exception {
+        //TODO: Instance nya gak di filter nih?
+        /* Classify Instance */
+
         double classIndex = 0;
 
         topology.initInputNodes(instance);
@@ -250,21 +260,35 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("simplified.weather.numeric.arff");
+        String datasetName = "iris.2D.arff";
 
+        Instances dataset = Util.readARFF(datasetName);
+
+        /* Filter dataset */
+        /* Filter nominal to binary */
+        NominalToBinary nominalToBinary = new NominalToBinary();
+        nominalToBinary.setInputFormat(dataset);
+        dataset = Filter.useFilter(dataset, nominalToBinary);
+
+        /* Normalize dataset value */
+        Normalize normalize = new Normalize();
+        normalize.setInputFormat(dataset);
+        dataset = Filter.useFilter(dataset, normalize);
+
+        /* topology config */
         Topology topology = new Topology();
         topology.addHiddenLayer(2);
         topology.setInitialWeight(0.1);
         topology.setLearningRate(0.1);
         topology.setMomentumRate(0.1);
-        topology.setNumIterations(2000000);
-        topology.setEpochErrorThreshold(0.5);
+        topology.setNumIterations(5000);
+//        topology.setEpochErrorThreshold(0.5);
 
         MultiLayerPerceptron multiLayerPerceptron = new MultiLayerPerceptron(topology);
         multiLayerPerceptron.buildClassifier(dataset);
 
+        Util.classify(dataset, new MultiLayerPerceptron(topology), datasetName);
 //        Evaluation eval = Util.crossValidationTest(dataset, new MultiLayerPerceptron(topology));
-        Util.classify("simplified.weather.numeric.arff", new MultiLayerPerceptron(topology));
 //        System.out.println(eval.toMatrixString());
 //        System.out.println(eval.toSummaryString());
     }

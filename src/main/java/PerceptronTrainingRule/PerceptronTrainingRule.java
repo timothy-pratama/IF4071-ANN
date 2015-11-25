@@ -50,6 +50,7 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
 
     @Override
     public void buildClassifier(Instances data) throws Exception {
+        getCapabilities().testWithFail(data);
         dataset = new Instances(data);
         for(int i=0; i<dataset.numAttributes(); i++)
         {
@@ -144,13 +145,13 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
 
         result.enable(Capabilities.Capability.NOMINAL_ATTRIBUTES);
         result.enable(Capabilities.Capability.NUMERIC_ATTRIBUTES);
-        result.enable(Capabilities.Capability.NOMINAL_CLASS);
+        result.enable(Capabilities.Capability.BINARY_CLASS);
 
         return result;
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.nominal.arff");
+        Instances dataset = Util.readARFF("weather.numeric.arff");
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);

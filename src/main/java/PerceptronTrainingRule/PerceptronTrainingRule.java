@@ -54,7 +54,6 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
         }
         nominalToBinaryFilter.setInputFormat(dataset);
         dataset = Filter.useFilter(dataset, nominalToBinaryFilter);
-
         topology.addInputLayer(dataset.numAttributes() - 1);
         topology.addOutputLayer(1);
 
@@ -72,7 +71,7 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
                 Instance instance = dataset.instance(i);
                 int target = ((int) instance.classValue())==0?-1:1;
                 topology.initInputNodes(instance);
-
+                
                 //topology.sortWeight(false, true);
                 topology.resetNodesInput();
 
@@ -104,6 +103,7 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
                 int squaredError = (output-target)*(output-target);
                 epochError += squaredError;
             }
+            epochError *= 0.5;
             tries++;
         }
         while((epochError > treshold) && (!topology.isUseIteration() || (tries < topology.getNumIterations())));

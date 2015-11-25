@@ -23,6 +23,7 @@ public class Weight implements Serializable{
      * This node previous delta weight. Used for calculation using momentum
      */
     private double previousDeltaWeight;
+    private double deltabatch;
 
     public Weight()
     {
@@ -30,6 +31,7 @@ public class Weight implements Serializable{
         node2 = new Node();
         randomWeight();
         previousDeltaWeight = 0;
+        deltabatch = 0.0;
     }
 
     public Weight(Node n1, Node n2)
@@ -38,6 +40,7 @@ public class Weight implements Serializable{
         node2 = n2;
         randomWeight();
         previousDeltaWeight = 0;
+        deltabatch = 0.0;
     }
 
     public Weight(Node n1, Node n2, double weight)
@@ -46,6 +49,7 @@ public class Weight implements Serializable{
         node2 = n2;
         this.weight = weight;
         previousDeltaWeight = 0;
+        deltabatch = 0.0;
     }
 
     /**
@@ -90,6 +94,14 @@ public class Weight implements Serializable{
 
     public void setPreviousDeltaWeight(double previousDeltaWeight) {
         this.previousDeltaWeight = previousDeltaWeight;
+    }
+
+    public double getDeltabatch() {
+        return deltabatch;
+    }
+
+    public void setDeltabatch(double deltabatch) {
+        this.deltabatch = deltabatch;
     }
 
     @Override

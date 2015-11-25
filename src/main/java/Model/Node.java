@@ -40,6 +40,7 @@ public class Node implements Serializable{
      * This node previous delta weight. Used for calculation using momentum
      */
     private double previousDeltaWeight;
+    private double deltabatch;
 
     public Node()
     {
@@ -51,6 +52,7 @@ public class Node implements Serializable{
         randomBias();
         biasValue = 1;
         previousDeltaWeight = 0;
+        deltabatch = 0.0;
     }
 
     public Node(int id)
@@ -63,6 +65,7 @@ public class Node implements Serializable{
         randomBias();
         biasValue = 1;
         previousDeltaWeight = 0;
+        deltabatch = 0.0;
     }
 
     /**
@@ -148,6 +151,14 @@ public class Node implements Serializable{
 
     public int getId() {
         return id;
+    }
+
+    public double getDeltabatch() {
+        return deltabatch;
+    }
+
+    public void setDeltabatch(double deltabatch) {
+        this.deltabatch = deltabatch;
     }
 
     public void setId(int id) {

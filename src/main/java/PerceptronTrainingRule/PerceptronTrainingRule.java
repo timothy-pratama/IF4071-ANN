@@ -5,11 +5,13 @@ import Model.Topology;
 import Model.Weight;
 import Util.Util;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
+import weka.filters.unsupervised.attribute.Normalize;
 
 import java.io.Serializable;
 
@@ -20,6 +22,7 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
     private Topology topology;
     private Instances dataset;
     private NominalToBinary nominalToBinaryFilter = new NominalToBinary();
+    private Normalize normalizeFilter = new Normalize();
 
     public PerceptronTrainingRule(){
         topology = new Topology();
@@ -47,6 +50,7 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
 
     @Override
     public void buildClassifier(Instances data) throws Exception {
+        getCapabilities().testWithFail(data);
         dataset = new Instances(data);
         for(int i=0; i<dataset.numAttributes(); i++)
         {
@@ -54,6 +58,8 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
         }
         nominalToBinaryFilter.setInputFormat(dataset);
         dataset = Filter.useFilter(dataset, nominalToBinaryFilter);
+        normalizeFilter.setInputFormat(dataset);
+        dataset = Filter.useFilter(dataset, normalizeFilter);
         topology.addInputLayer(dataset.numAttributes() - 1);
         topology.addOutputLayer(1);
 
@@ -111,7 +117,13 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
     }
 
     @Override
-    public double classifyInstance(Instance instance) throws Exception {
+    public double classifyInstance(Instance data) throws Exception {
+        Instance instance = new Instance(data);
+        nominalToBinaryFilter.input(instance);
+        instance = nominalToBinaryFilter.output();
+        normalizeFilter.input(instance);
+        instance = normalizeFilter.output();
+
         topology.initInputNodes(instance);
         Node outputNode = topology.getOutputNode(0);
         topology.resetNodesInput();
@@ -132,24 +144,22 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
 
         result.enable(Capabilities.Capability.NOMINAL_ATTRIBUTES);
         result.enable(Capabilities.Capability.NUMERIC_ATTRIBUTES);
-        result.enable(Capabilities.Capability.NOMINAL_CLASS);
+        result.enable(Capabilities.Capability.BINARY_CLASS);
 
         return result;
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.nominal.arff");
+        Instances dataset = Util.readARFF("weather.numeric.arff");
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);
         topology.setMomentumRate(0.0);
-        topology.setEpochErrorThreshold(0);
-        topology.setUseErrorThreshold(true);
-        topology.setUseIteration(true);
-        topology.setNumIterations(10);
+        topology.setNumIterations(500);
         PerceptronTrainingRule ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
-        Util.classify("weather.nominal.classify.arff",ptr);
-
+        Evaluation eval = Util.evaluateModel(ptr, dataset);
+        System.out.println(eval.toSummaryString());
+        System.out.println(eval.toMatrixString());
     }
 }

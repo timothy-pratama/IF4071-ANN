@@ -6,15 +6,14 @@ import Model.Weight;
 import Util.Util;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.evaluation.EvaluationUtils;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
+import weka.filters.unsupervised.attribute.Normalize;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Created by timothy.pratama on 15-Nov-15.
@@ -23,11 +22,13 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
     private Topology topology;
     private Instances dataset;
     private NominalToBinary nominalToBinaryFilter;
+    private Normalize normalizeFilter;
 
     MultiLayerPerceptron(Topology t)
     {
         topology = t;
         nominalToBinaryFilter = new NominalToBinary();
+        normalizeFilter = new Normalize();
     }
 
     public Topology getTopology() {
@@ -59,6 +60,10 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
         /* filter dataset, convert nominal ke binary */
         nominalToBinaryFilter.setInputFormat(dataset);
         dataset = Filter.useFilter(dataset, nominalToBinaryFilter);
+
+        /* filter normalization for numeric input */
+        normalizeFilter.setInputFormat(dataset);
+        dataset = Filter.useFilter(dataset, normalizeFilter);
 
         /* Update topologi dengan input neuron & output neuron
          * Jumlah input neuron = jumlah atribut dari data
@@ -151,7 +156,7 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
             if(topology.isUseIteration())
             {
                 iterations++;
-                System.out.println(iterations);
+//                System.out.println(iterations);
                 if(iterations >= topology.getNumIterations())
                 {
                     break;
@@ -207,8 +212,15 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
     }
 
     @Override
-    public double classifyInstance(Instance instance) throws Exception {
-        double classIndex = 0;
+    public double classifyInstance(Instance data) throws Exception {
+        Instance instance = new Instance(data);
+
+        /* Filter instance */
+        nominalToBinaryFilter.input(instance);
+        instance = nominalToBinaryFilter.output();
+
+        normalizeFilter.input(instance);
+        instance = normalizeFilter.output();
 
         topology.initInputNodes(instance);
         topology.initOutputNodes(instance);
@@ -250,21 +262,22 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("iris.2D.arff");
+        String datasetName = "iris.2D.arff";
+        Instances dataset = Util.readARFF(datasetName);
 
         Topology topology = new Topology();
-        topology.addHiddenLayer(2);
-        topology.setInitialWeight(0.1);
-        topology.setLearningRate(0.1);
-        topology.setMomentumRate(0.1);
-//        topology.setNumIterations(2000);
-        topology.setEpochErrorThreshold(0.5);
+        topology.addHiddenLayer(5);
+        topology.addHiddenLayer(5);
+        topology.setLearningRate(0.3);
+        topology.setMomentumRate(0.2);
+        topology.setNumIterations(5000);
+//        topology.setEpochErrorThreshold(0.0);
 
         MultiLayerPerceptron multiLayerPerceptron = new MultiLayerPerceptron(topology);
         multiLayerPerceptron.buildClassifier(dataset);
 
-        Evaluation eval = Util.crossValidationTest(dataset, new MultiLayerPerceptron(topology));
-        System.out.println(eval.toMatrixString());
+        Evaluation eval = Util.evaluateModel(multiLayerPerceptron, dataset);
         System.out.println(eval.toSummaryString());
+        System.out.println(eval.toMatrixString());
     }
 }

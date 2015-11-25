@@ -149,7 +149,7 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
         topology.setNumIterations(10);
         PerceptronTrainingRule ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
-        Util.classify(dataset, ptr, "weather.nominal.classify.arff");
+        Util.classify("weather.nominal.classify.arff",ptr);
 
     }
 }

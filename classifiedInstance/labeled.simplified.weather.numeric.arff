@@ -1,12 +1,12 @@
-@relation weather-weka.filters.unsupervised.attribute.NominalToBinary-Rfirst-last-weka.filters.unsupervised.attribute.Normalize-S1.0-T0.0
+@relation weather
 
 @attribute temperature numeric
 @attribute humidity numeric
-@attribute windy numeric
+@attribute windy {TRUE,FALSE}
 @attribute play {yes,no}
 
 @data
-1,0,1,no
-0.666667,0.454545,0,no
-0.866667,0.090909,1,yes
-0,1,1,yes
+85,85,FALSE,no
+80,90,TRUE,no
+83,86,FALSE,yes
+70,96,FALSE,yes

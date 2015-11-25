@@ -1,5 +1,6 @@
 package Util;
 
+import groovy.util.Eval;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
@@ -285,6 +286,17 @@ public class Util {
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    public static Evaluation evaluateModel(Classifier classifier, Instances dataset) {
+        try {
+            Evaluation eval = new Evaluation(dataset);
+            eval.evaluateModel(classifier, dataset);
+            return eval;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

@@ -12,6 +12,8 @@ import weka.core.converters.CSVLoader;
 import weka.core.converters.ConverterUtils;
 import weka.filters.Filter;
 import weka.filters.supervised.instance.Resample;
+import weka.filters.unsupervised.attribute.NominalToBinary;
+import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.Remove;
 
 import java.io.BufferedWriter;
@@ -191,6 +193,20 @@ public class Util {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Instances filterNormalizeBinary(Instances dataset) throws Exception {
+        Instances data = new Instances(dataset);
+
+        NominalToBinary nominalToBinaryFilter = new NominalToBinary();
+        nominalToBinaryFilter.setInputFormat(data);
+        data = Filter.useFilter(data, nominalToBinaryFilter);
+
+        Normalize normalizeFilter = new Normalize();
+        normalizeFilter.setInputFormat(data);
+        data = Filter.useFilter(data, normalizeFilter);
+
+        return data;
     }
 
     /**

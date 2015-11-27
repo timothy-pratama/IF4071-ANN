@@ -156,8 +156,7 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
                 outputNode.setPreviousDeltaWeight(outputNode.getDeltabatch() + topology.getMomentumRate()* outputNode.getPreviousDeltaWeight());
                 outputNode.setDeltabatch(0.0);
 
-
-                //Squared n Eppoch Error
+                //Squared n Epoch Error
                 for (int i = 0; i < dataset.numInstances(); i++) {
                     Instance instance = dataset.instance(i);
                     topology.initInputNodes(instance);
@@ -246,8 +245,8 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
 
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
-        topology.setInitialWeight(0.0);
-        topology.setMomentumRate(0.0);
+//        topology.setInitialWeight(0.0);
+        topology.setMomentumRate(0.1);
         topology.setEpochErrorThreshold(0);
         topology.setNumIterations(5);
 
@@ -256,8 +255,9 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
         dtr.buildClassifier(dataset);
 
         Evaluation eval = Util.evaluateModel(dtr, dataset);
-        System.out.println(eval.toSummaryString());
+        eval = Util.crossValidationTest(dataset, dtr);
         System.out.println(eval.toMatrixString());
+        System.out.println(eval.toSummaryString());
         System.out.println(dtr);
     }
 }

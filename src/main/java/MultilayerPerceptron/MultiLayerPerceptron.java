@@ -156,7 +156,6 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
             if(topology.isUseIteration())
             {
                 iterations++;
-//                System.out.println(iterations);
                 if(iterations >= topology.getNumIterations())
                 {
                     break;
@@ -173,7 +172,6 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
                     epochError = epochError + Math.pow(outputNode.getTarget() - outputNode.getOutput(),2);
                 }
                 epochError = epochError / 2;
-                System.out.println(epochError);
 
                 if (epochError <= topology.getEpochErrorThreshold())
                 {
@@ -281,23 +279,24 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
     }
 
     public static void main(String [] args) throws Exception {
-        String datasetName = "iris.2D.arff";
+        String datasetName = "iris.arff";
         Instances dataset = Util.readARFF(datasetName);
 
         Topology topology = new Topology();
         topology.addHiddenLayer(5);
         topology.addHiddenLayer(5);
-        topology.setInitialWeight(0.0);
+//        topology.setInitialWeight(0.0);
         topology.setLearningRate(0.3);
         topology.setMomentumRate(0.2);
-        topology.setNumIterations(5000);
-//        topology.setEpochErrorThreshold(0.0);
+        topology.setNumIterations(1000);
+        topology.setEpochErrorThreshold(0.0);
 
-        MultiLayerPerceptron multiLayerPerceptron = new MultiLayerPerceptron(topology);
+        Classifier multiLayerPerceptron = new MultiLayerPerceptron(topology);
         multiLayerPerceptron.buildClassifier(dataset);
 
         Evaluation eval = Util.evaluateModel(multiLayerPerceptron, dataset);
-        System.out.println(eval.toSummaryString());
+        eval = Util.crossValidationTest(dataset, multiLayerPerceptron);
         System.out.println(eval.toMatrixString());
+        System.out.println(eval.toSummaryString());
     }
 }

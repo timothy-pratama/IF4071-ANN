@@ -194,6 +194,7 @@ public class Node implements Serializable{
         StringBuffer sb = new StringBuffer();
         sb.append("Node ").append(id).append("\n");
         sb.append("biasWeight: ").append(biasWeight).append("\n");
+        sb.append("biasValue: " ).append(biasValue).append("\n");
         sb.append("error: ").append(error).append("\n");
         sb.append("target: ").append(target).append("\n");
         sb.append("output: ").append(output).append("\n");

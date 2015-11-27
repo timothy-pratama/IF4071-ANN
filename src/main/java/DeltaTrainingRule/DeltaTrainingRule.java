@@ -5,6 +5,7 @@ import Model.Topology;
 import Model.Weight;
 import Util.Util;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -176,6 +177,25 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
     }
 
     @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+
+        topology.sortWeight(true, true);
+        topology.sortWeight(false, true);
+
+        for (Weight w : topology.getWeights()){
+            result.append("Weight[").append(w.getNode1().getId()).append("][").append(w.getNode2().getId()).append("]: ").append(w.getWeight()).append("\n");
+        }
+
+        for (int i=topology.getLayers().get(0); i<topology.getNodes().size(); i++) {
+            Node n = topology.getNodes().get(i);
+            result.append("Bias Node ").append(n.getId()).append(": ").append(n.getBiasWeight()).append("\n");
+        }
+
+        return result.toString();
+    }
+
+    @Override
     public double classifyInstance(Instance instance) throws Exception {
         topology.initInputNodes(instance);
         Node outputNode = topology.getOutputNode(0);
@@ -206,18 +226,22 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
 
     public static void main(String [] args) throws Exception {
         Instances dataset = Util.readARFF("iris.arff");
+
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);
         topology.setMomentumRate(0.0);
         topology.setEpochErrorThreshold(0);
-        topology.setUseErrorThreshold(true);
-        topology.setUseIteration(true);
         topology.setNumIterations(10000);
-        DeltaTrainingRule dtr = new DeltaTrainingRule(topology);
-        dtr.setDeltaRuleType(DeltaRuleType.Batch);
-        dtr.buildClassifier(dataset);
-        Util.classify("iris.numeric.classify.arff",dtr);
 
+        DeltaTrainingRule dtr = new DeltaTrainingRule(topology);
+        dtr.setDeltaRuleType(DeltaRuleType.Incremental);
+        dtr.buildClassifier(dataset);
+
+        Evaluation eval = Util.evaluateModel(dtr, dataset);
+        System.out.println(eval.toMatrixString());
+        System.out.println(eval.toSummaryString());
+
+        System.out.println(dtr);
     }
 }

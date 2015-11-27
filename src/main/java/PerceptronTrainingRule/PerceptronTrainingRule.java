@@ -67,10 +67,9 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
 
         int epochError;
         int tries = 0;
-        double previousdelta = 0.0;
         Node outputNode = topology.getOutputNode(0);
         outputNode.setBiasWeight(0.0);
-        double treshold = topology.isUseErrorThreshold()?topology.getEpochErrorThreshold():0.0;
+        double threshold = topology.isUseErrorThreshold()?topology.getEpochErrorThreshold():0.0;
         do {
             epochError = 0;
             for (int i = 0; i < dataset.numInstances(); i++) {
@@ -78,7 +77,6 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
                 int target = ((int) instance.classValue())==0?-1:1;
                 topology.initInputNodes(instance);
                 
-                //topology.sortWeight(false, true);
                 topology.resetNodesInput();
 
                 for (int j = 0; j < topology.getWeights().size(); j++) {
@@ -99,20 +97,27 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
                                 topology.getMomentumRate()* outputNode.getPreviousDeltaWeight();
                 outputNode.setPreviousDeltaWeight(delta);
                 outputNode.setBiasWeight(biasWeight + delta);
+            }
+
+            for(int i=0; i<dataset.numInstances(); i++){
+                Instance instance = dataset.instance(i);
+                topology.initInputNodes(instance);
                 topology.resetNodesInput();
                 for (int j = 0; j < topology.getWeights().size(); j++) {
                     Weight weight = topology.getWeights().get(j);
                     weight.getNode2().setInput(weight.getNode2().getInput() + (weight.getNode1().getOutput() * weight.getWeight()));
                 }
                 outputNode.setInput(outputNode.getInput() + (outputNode.getBiasValue() * outputNode.getBiasWeight()));
-                output = Node.sign(outputNode.getInput());
+                int output = Node.sign(outputNode.getInput());
+                int target = ((int) instance.classValue())==0?-1:1;
                 int squaredError = (output-target)*(output-target);
                 epochError += squaredError;
             }
+
             epochError *= 0.5;
             tries++;
         }
-        while((epochError > treshold) && (!topology.isUseIteration() || (tries < topology.getNumIterations())));
+        while((epochError > threshold) && (!topology.isUseIteration() || (tries < topology.getNumIterations())));
 
     }
 
@@ -138,6 +143,25 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
     }
 
     @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+
+        topology.sortWeight(true, true);
+        topology.sortWeight(false, true);
+
+        for (Weight w : topology.getWeights()){
+            result.append("Weight[").append(w.getNode1().getId()).append("][").append(w.getNode2().getId()).append("]: ").append(w.getWeight()).append("\n");
+        }
+
+        for (int i=topology.getLayers().get(0); i<topology.getNodes().size(); i++) {
+            Node n = topology.getNodes().get(i);
+            result.append("Bias Node ").append(n.getId()).append(": ").append(n.getBiasWeight()).append("\n");
+        }
+
+        return result.toString();
+    }
+
+    @Override
     public Capabilities getCapabilities() {
         Capabilities result = super.getCapabilities();
         result.disableAll();
@@ -155,11 +179,12 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);
         topology.setMomentumRate(0.0);
-        topology.setNumIterations(500);
+        topology.setNumIterations(3);
         Classifier ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
         Evaluation eval = Util.evaluateModel(ptr, dataset);
         System.out.println(eval.toSummaryString());
         System.out.println(eval.toMatrixString());
+        System.out.println(ptr);
     }
 }

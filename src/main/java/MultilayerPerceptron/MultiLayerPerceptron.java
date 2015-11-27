@@ -299,6 +299,5 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
         Evaluation eval = Util.evaluateModel(multiLayerPerceptron, dataset);
         System.out.println(eval.toSummaryString());
         System.out.println(eval.toMatrixString());
-        System.out.println(multiLayerPerceptron);
     }
 }

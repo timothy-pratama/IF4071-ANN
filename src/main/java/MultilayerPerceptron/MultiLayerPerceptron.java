@@ -261,6 +261,25 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
         return maxIndex;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+
+        topology.sortWeight(true, true);
+        topology.sortWeight(false, true);
+
+        for (Weight w : topology.getWeights()){
+            result.append("Weight[").append(w.getNode1().getId()).append("][").append(w.getNode2().getId()).append("]: ").append(w.getWeight()).append("\n");
+        }
+
+        for (int i=topology.getLayers().get(0); i<topology.getNodes().size(); i++) {
+            Node n = topology.getNodes().get(i);
+            result.append("Bias Node ").append(n.getId()).append(": ").append(n.getBiasWeight()).append("\n");
+        }
+
+        return result.toString();
+    }
+
     public static void main(String [] args) throws Exception {
         String datasetName = "iris.2D.arff";
         Instances dataset = Util.readARFF(datasetName);
@@ -268,6 +287,7 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
         Topology topology = new Topology();
         topology.addHiddenLayer(5);
         topology.addHiddenLayer(5);
+        topology.setInitialWeight(0.0);
         topology.setLearningRate(0.3);
         topology.setMomentumRate(0.2);
         topology.setNumIterations(5000);
@@ -279,5 +299,6 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
         Evaluation eval = Util.evaluateModel(multiLayerPerceptron, dataset);
         System.out.println(eval.toSummaryString());
         System.out.println(eval.toMatrixString());
+        System.out.println(multiLayerPerceptron);
     }
 }

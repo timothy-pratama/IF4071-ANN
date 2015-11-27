@@ -150,13 +150,13 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.numeric.arff");
+        Instances dataset = Util.readARFF("weather.nominal.arff");
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);
         topology.setMomentumRate(0.0);
         topology.setNumIterations(500);
-        PerceptronTrainingRule ptr = new PerceptronTrainingRule(topology);
+        Classifier ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
         Evaluation eval = Util.evaluateModel(ptr, dataset);
         System.out.println(eval.toSummaryString());

@@ -249,8 +249,6 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
         topology.setInitialWeight(0.0);
         topology.setMomentumRate(0.0);
         topology.setEpochErrorThreshold(0);
-        topology.setUseErrorThreshold(true);
-        topology.setUseIteration(true);
         topology.setNumIterations(5);
 
         DeltaTrainingRule dtr = new DeltaTrainingRule(topology);

@@ -4,6 +4,7 @@ import Model.Node;
 import Model.Topology;
 import Model.Weight;
 import Util.Util;
+import groovy.util.Eval;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
@@ -174,17 +175,21 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.nominal.arff");
+        Instances dataset = Util.readARFF("iris.arff");
+
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
         topology.setInitialWeight(0.0);
         topology.setMomentumRate(0.0);
-        topology.setNumIterations(3);
+        topology.setNumIterations(100);
+
         Classifier ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
         Evaluation eval = Util.evaluateModel(ptr, dataset);
-        System.out.println(eval.toSummaryString());
+        eval = Util.crossValidationTest(dataset, ptr);
+
         System.out.println(eval.toMatrixString());
+        System.out.println(eval.toSummaryString());
         System.out.println(ptr);
     }
 }

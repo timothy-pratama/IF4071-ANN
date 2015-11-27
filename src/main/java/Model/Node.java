@@ -95,7 +95,7 @@ public class Node implements Serializable{
      * @param x input value to neuron
      * @return sign(x)
      */
-    public static int sign(double x)
+    public static int   sign(double x)
     {
         if(x > 0)
         {

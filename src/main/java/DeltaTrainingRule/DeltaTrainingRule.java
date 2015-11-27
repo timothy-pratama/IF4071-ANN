@@ -139,7 +139,7 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
                     double output = outputNode.getInput();
                     for (int j = 0; j < topology.getWeights().size(); j++) {
                         Weight weight = topology.getWeights().get(j);
-                        weight.setDeltabatch(weight.getDeltabatch() + topology.getLearningRate() * (target - output) * weight.getNode1().getOutput());
+                        weight.setPreviousDeltaBatch(weight.getPreviousDeltaBatch() + topology.getLearningRate() * (target - output) * weight.getNode1().getOutput());
                     }
 
                     outputNode.setDeltabatch(outputNode.getDeltabatch() + (topology.getLearningRate() * (target - output) * outputNode.getBiasValue()));
@@ -147,9 +147,9 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
 
                 for (int j = 0; j < topology.getWeights().size(); j++) {
                     Weight weight = topology.getWeights().get(j);
-                    weight.setWeight(weight.getWeight()+weight.getDeltabatch() + topology.getMomentumRate()* weight.getPreviousDeltaWeight());
-                    weight.setPreviousDeltaWeight(weight.getDeltabatch() + topology.getMomentumRate()* weight.getPreviousDeltaWeight());
-                    weight.setDeltabatch(0.0);
+                    weight.setWeight(weight.getWeight()+weight.getPreviousDeltaBatch() + topology.getMomentumRate()* weight.getPreviousDeltaWeight());
+                    weight.setPreviousDeltaWeight(weight.getPreviousDeltaBatch() + topology.getMomentumRate()* weight.getPreviousDeltaWeight());
+                    weight.setPreviousDeltaBatch(0.0);
                 }
 
                 outputNode.setBiasWeight(outputNode.getBiasWeight() + outputNode.getDeltabatch() + topology.getMomentumRate() * outputNode.getPreviousDeltaWeight());

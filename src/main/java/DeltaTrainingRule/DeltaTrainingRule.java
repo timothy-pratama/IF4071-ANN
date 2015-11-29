@@ -241,21 +241,21 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("iris.arff");
+        Instances dataset = Util.readARFF("weather.nominal.arff");
 
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
 //        topology.setInitialWeight(0.0);
         topology.setMomentumRate(0.1);
         topology.setEpochErrorThreshold(0);
-        topology.setNumIterations(5);
+        topology.setNumIterations(5000);
 
         DeltaTrainingRule dtr = new DeltaTrainingRule(topology);
-        dtr.setDeltaRuleType(DeltaRuleType.Batch);
+        dtr.setDeltaRuleType(DeltaRuleType.Incremental);
         dtr.buildClassifier(dataset);
 
         Evaluation eval = Util.evaluateModel(dtr, dataset);
-        eval = Util.crossValidationTest(dataset, dtr);
+//        eval = Util.crossValidationTest(dataset, dtr);
         System.out.println(eval.toMatrixString());
         System.out.println(eval.toSummaryString());
         System.out.println(dtr);

@@ -279,7 +279,7 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
     }
 
     public static void main(String [] args) throws Exception {
-        String datasetName = "iris.arff";
+        String datasetName = "weather.nominal.arff";
         Instances dataset = Util.readARFF(datasetName);
 
         Topology topology = new Topology();
@@ -295,7 +295,7 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
         multiLayerPerceptron.buildClassifier(dataset);
 
         Evaluation eval = Util.evaluateModel(multiLayerPerceptron, dataset);
-        eval = Util.crossValidationTest(dataset, multiLayerPerceptron);
+//        eval = Util.crossValidationTest(dataset, multiLayerPerceptron);
         System.out.println(eval.toMatrixString());
         System.out.println(eval.toSummaryString());
     }

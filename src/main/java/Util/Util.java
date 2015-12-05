@@ -315,8 +315,7 @@ public class Util {
         }
     }
 
-    public static void main(String [] args)
-    {
+    public static void main(String [] args) throws Exception {
         System.out.println("========== Reading File From ARFF ==========");
         Instances dataSet = Util.readARFF("weather.nominal.arff");
         System.out.println(dataSet.toString());
@@ -375,6 +374,7 @@ public class Util {
         System.out.println("\n========== Cross Validation ID3 Classifier ==========");
         eval = Util.crossValidationTest(dataSet, new Id3());
         System.out.println(eval.toSummaryString("\nResults\n===========\n", false));
+        System.out.println(eval.toMatrixString());
 
         System.out.println("\n========== Cross Validation J48 Classifier ==========");
         eval = Util.crossValidationTest(dataSet, new J48());

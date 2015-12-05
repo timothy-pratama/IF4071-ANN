@@ -52,6 +52,14 @@ public class Weight implements Serializable{
         previousDeltaBatch = 0.0;
     }
 
+    public Weight(Weight w) {
+        this.previousDeltaBatch = w.previousDeltaBatch;
+        this.previousDeltaWeight = w.previousDeltaWeight;
+        this.weight = w.weight;
+        this.node2 = w.node2;
+        this.node1 = w.node1;
+    }
+
     /**
      * Assign random value between -0.1 and 0.1 for the weight
      */

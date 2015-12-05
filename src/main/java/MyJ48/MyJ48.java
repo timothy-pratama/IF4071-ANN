@@ -47,7 +47,7 @@ public class MyJ48 extends Classifier implements Serializable {
     /**
      * this attribute store the confidence level of the j48 tree
      */
-    private float confidenceLevel = 0.1f;
+    private float confidenceLevel = 0.4f;
 
     /**
      * This attribute store the type of this node whether it's splitable or not-splitable (leaf)
@@ -535,11 +535,10 @@ public class MyJ48 extends Classifier implements Serializable {
     }
 
     public static void main (String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.nominal.arff");
+        Instances dataset = Util.readARFF("car.arff");
         Classifier myj48 = new MyJ48();
         myj48.buildClassifier(dataset);
-        Evaluation evaluation = Util.evaluateModel(myj48, dataset);
-        evaluation = Util.crossValidationTest(dataset, myj48);
+        Evaluation evaluation = Util.crossValidationTest(dataset, new MyJ48());
         System.out.println(evaluation.toMatrixString());
         System.out.println(evaluation.toSummaryString());
     }

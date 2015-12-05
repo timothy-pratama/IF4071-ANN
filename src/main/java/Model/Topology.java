@@ -77,6 +77,20 @@ public class Topology implements Serializable{
         momentumRate = 0.1;
     }
 
+    public Topology(Topology t){
+        nodes = new ArrayList<>();
+        weights = new ArrayList<>();
+        layers = new ArrayList<>();
+        initialWeight = t.initialWeight;
+        useInitialWeight = t.useInitialWeight;
+        numIterations = t.numIterations;
+        useIteration = t.useIteration;
+        epochErrorThreshold = t.epochErrorThreshold;
+        useErrorThreshold = t.useErrorThreshold;
+        learningRate = t.learningRate;
+        momentumRate = t.momentumRate;
+    }
+
     public ArrayList<Node> getNodes() {
         return nodes;
     }

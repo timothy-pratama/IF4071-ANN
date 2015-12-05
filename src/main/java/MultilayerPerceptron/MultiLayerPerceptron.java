@@ -6,6 +6,7 @@ import Model.Weight;
 import Util.Util;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.EvaluationUtils;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -26,7 +27,7 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
 
     MultiLayerPerceptron(Topology t)
     {
-        topology = t;
+        topology = new Topology(t);
         nominalToBinaryFilter = new NominalToBinary();
         normalizeFilter = new Normalize();
     }
@@ -278,24 +279,37 @@ public class MultiLayerPerceptron extends Classifier implements Serializable {
         return result.toString();
     }
 
+    @Override
+    public double[] distributionForInstance(Instance instance) throws Exception {
+        double result[] = new double[instance.numClasses()];
+        double classValue = classifyInstance(instance);
+        for(int i=0; i<instance.numClasses(); i++){
+            if((int)classValue == i){
+                result[i] = 1;
+            } else {
+                result[i] = 0;
+            }
+        }
+        return result;
+    }
+
     public static void main(String [] args) throws Exception {
-        String datasetName = "weather.nominal.arff";
+        String datasetName = "car.arff";
         Instances dataset = Util.readARFF(datasetName);
 
         Topology topology = new Topology();
+//        topology.addHiddenLayer(5);
         topology.addHiddenLayer(5);
-        topology.addHiddenLayer(5);
-//        topology.setInitialWeight(0.0);
-        topology.setLearningRate(0.3);
-        topology.setMomentumRate(0.2);
-        topology.setNumIterations(1000);
+        topology.setLearningRate(0.1);
+        topology.setMomentumRate(0.1);
+        topology.setNumIterations(500);
         topology.setEpochErrorThreshold(0.0);
 
         Classifier multiLayerPerceptron = new MultiLayerPerceptron(topology);
         multiLayerPerceptron.buildClassifier(dataset);
 
-        Evaluation eval = Util.evaluateModel(multiLayerPerceptron, dataset);
-//        eval = Util.crossValidationTest(dataset, multiLayerPerceptron);
+//        Evaluation eval = Util.evaluateModel(multiLayerPerceptron, dataset);
+        Evaluation eval = Util.crossValidationTest(dataset, new MultiLayerPerceptron(topology));
         System.out.println(eval.toMatrixString());
         System.out.println(eval.toSummaryString());
     }

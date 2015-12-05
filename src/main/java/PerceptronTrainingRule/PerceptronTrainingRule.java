@@ -4,7 +4,6 @@ import Model.Node;
 import Model.Topology;
 import Model.Weight;
 import Util.Util;
-import groovy.util.Eval;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
@@ -15,6 +14,7 @@ import weka.filters.unsupervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.Normalize;
 
 import java.io.Serializable;
+import java.util.Random;
 
 /**
  * Created by timothy.pratama on 07-Nov-15.
@@ -30,7 +30,7 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
     }
 
     public PerceptronTrainingRule(Topology t){
-        topology = t;
+        topology = new Topology(t);
     }
 
     public Topology getTopology() {
@@ -178,15 +178,18 @@ public class PerceptronTrainingRule extends Classifier implements Serializable{
         Instances dataset = Util.readARFF("weather.numeric.arff");
 
         Topology topology = new Topology();
-        topology.setLearningRate(0.1);
-        topology.setInitialWeight(0.0);
+        topology.setLearningRate(0.2);
+//        topology.setInitialWeight(0.0);
         topology.setMomentumRate(0.0);
-        topology.setNumIterations(100);
+        topology.setNumIterations(500);
 
         Classifier ptr = new PerceptronTrainingRule(topology);
         ptr.buildClassifier(dataset);
-        Evaluation eval = Util.evaluateModel(ptr, dataset);
-//        eval = Util.crossValidationTest(dataset, ptr);
+//        Evaluation eval = Util.evaluateModel(ptr, dataset);
+//        Evaluation eval = Util.crossValidationTest(dataset, ptr);
+        Evaluation eval = new Evaluation(dataset);
+        Random random = new Random(1);
+        eval.crossValidateModel(new PerceptronTrainingRule(topology), dataset, 10, random);
 
         System.out.println(eval.toMatrixString());
         System.out.println(eval.toSummaryString());

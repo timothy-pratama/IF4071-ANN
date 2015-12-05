@@ -374,7 +374,8 @@ public class MyId3 extends Classifier implements Serializable{
         Classifier id3 = new MyId3();
         id3.buildClassifier(dataset);
 
-        Evaluation eval = Util.evaluateModel(id3, dataset);
+//        Evaluation eval = Util.evaluateModel(id3, dataset);
+        Evaluation eval = Util.crossValidationTest(dataset, id3);
         System.out.println(eval.toMatrixString());
         System.out.println(eval.toSummaryString());
     }

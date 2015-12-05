@@ -55,6 +55,18 @@ public class Node implements Serializable{
         deltabatch = 0.0;
     }
 
+    public Node(Node n) {
+        this.error = n.error;
+        this.target = n.target;
+        this.output = n.output;
+        this.input = n.input;
+        this.biasWeight = n.biasWeight;
+        this.biasValue = n.biasValue;
+        this.id = n.id;
+        this.previousDeltaWeight = n.previousDeltaWeight;
+        this.deltabatch = n.deltabatch;
+    }
+
     public Node(int id)
     {
         error = 0;

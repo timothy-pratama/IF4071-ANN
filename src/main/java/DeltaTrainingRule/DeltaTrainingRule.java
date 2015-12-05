@@ -31,7 +31,13 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
     }
 
     public DeltaTrainingRule(Topology t){
-        topology = t;
+        topology = new Topology(t);
+    }
+
+    public DeltaTrainingRule(Topology t, DeltaRuleType deltaRuleType)
+    {
+        this.topology = new Topology(t);
+        this.rule = deltaRuleType;
     }
 
     public Topology getTopology() {
@@ -210,6 +216,20 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
     }
 
     @Override
+    public double[] distributionForInstance(Instance instance) throws Exception {
+        double result[] = new double[instance.numClasses()];
+        double classValue = classifyInstance(instance);
+        for(int i=0; i<instance.numClasses(); i++){
+            if((int)classValue == i){
+                result[i] = 1;
+            } else {
+                result[i] = 0;
+            }
+        }
+        return result;
+    }
+
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
 
@@ -241,23 +261,22 @@ public class DeltaTrainingRule extends Classifier implements Serializable{
     }
 
     public static void main(String [] args) throws Exception {
-        Instances dataset = Util.readARFF("weather.nominal.arff");
+        Instances dataset = Util.readARFF("car.arff");
 
         Topology topology = new Topology();
         topology.setLearningRate(0.1);
 //        topology.setInitialWeight(0.0);
-        topology.setMomentumRate(0.1);
+        topology.setMomentumRate(0.3);
         topology.setEpochErrorThreshold(0);
-        topology.setNumIterations(5000);
+        topology.setNumIterations(500);
 
         DeltaTrainingRule dtr = new DeltaTrainingRule(topology);
         dtr.setDeltaRuleType(DeltaRuleType.Incremental);
         dtr.buildClassifier(dataset);
 
-        Evaluation eval = Util.evaluateModel(dtr, dataset);
-//        eval = Util.crossValidationTest(dataset, dtr);
+//        Evaluation eval = Util.evaluateModel(dtr, dataset);
+        Evaluation eval = Util.crossValidationTest(dataset, new DeltaTrainingRule(topology, DeltaRuleType.Incremental));
         System.out.println(eval.toMatrixString());
         System.out.println(eval.toSummaryString());
-        System.out.println(dtr);
     }
 }
